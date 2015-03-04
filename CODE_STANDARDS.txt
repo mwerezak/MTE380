@@ -4,16 +4,16 @@ consistently such that we do not confuse each other. Also organizing the
 code will make it a lot easier to debug if we run into any issues or when
 we are correcting values during testing.
 
-- All tabs should be 4 spaces
+- Try to implement new features on branches that are not master, fixes are exempt.
+  This is important as code changes that are made straight to master cannot be properly reviewed.
+- All tabs should be 4 spaces. Indents should be made with space characters.
 - the curly brackets for functions should start on the same line as their
   parent function
 - variable names should mean something. Avoid using single letters even
   for loops and other iterative structures. Exceptions will be made if
   performance decreases significantly in certain areas of code.
-- all functions, if statements, loops etc should should have
-  an end comment: eg: //end if, //end main
 - add a empty line at the start of the function and the end
-- comments should be roughly 60-80 characters in line length
+- comments should be roughly 60-120 characters in line length
 - function comments will follow the general style of documentation
   as follows:
   /*
@@ -31,29 +31,29 @@ we are correcting values during testing.
   for parent brackets unless two brackets are beside each then a space is
   required. 
   For example: 
-    function(argument1, argument2, funcarg(arg1, arg2) ){}//end function
+    function(argument1, argument2, funcarg(arg1, arg2)) {}//end function
 
 -MORE WILL BE ADDED AS NEEDED
     
  /*
-  * Name         : main
-  *
   * Synopsis     : void main()   *
   * Arguments    :
   *
   * Description  : Main function outputs "Helloworld" 10 times
+  *                Include any preconditions or postconditions.
+  *                Describe why and when anyone would want to 
+  *                call this function.
   * 
   * Returns      :
   */
-  
-void main(){
+void main() {
     
     int repeatHello;
     
     
-    for (repeatHello = 0; repeatHello < 10; repeatHello){
+    for (repeatHello = 0; repeatHello < 10; repeatHello++) {
     
-        if (flag == true){
+        if (flag == true) {
         
             Serial.println("Helloworld");
             

@@ -8,7 +8,7 @@
  *This library stores all the functions involved in retrieving data 
  *from the sensors directly.
  **/
-#include "slib.h"
+#include "sensorlib.h"
 
 /*
  * Name         : readSound
@@ -44,7 +44,7 @@ long readSound(int _PIN){
  * 
  * Returns      : bool:  1 no, 0 yes
  */
-bool readIRC(int _PIN){
+bool readProxIR(int _PIN){
     
     return digitalRead(_PIN);
     
@@ -60,7 +60,7 @@ bool readIRC(int _PIN){
  * 
  * Returns      : bool: 1-started, 0 failed to start
  */
-bool startIRF(int _PIN_ONE){
+bool startDistanceIR(int _PIN_ONE){
     
     pinMode(_PIN_ONE,OUTPUT);
     digitalWrite(_PIN_ONE,HIGH);
@@ -79,7 +79,7 @@ bool startIRF(int _PIN_ONE){
  * 
  * Returns      : float: distnce in cm
  */
-float readIRF(int _PIN_ONE){
+float readDistanceIR(int _PIN_ONE){
     
     int val;
     delayMicroseconds(22);
@@ -95,11 +95,12 @@ float readIRF(int _PIN_ONE){
  * Synopsis     : bool stopIRF(int _PIN_ONE) *
  * Arguments    : int  _PIN_ONE : Digital input pin of long distance IR sensor
  *
- * Description  : stops IR sensor from reading data
+ * Description  : stops IR sensor from reading data 
+ *                WHEN AND WHY DO WE WANT TO CALL THIS?
  * 
  * Returns      : bool: 1-Stopped, 0-failed
  */
-bool stopIRF(int _PIN_ONE){
+bool stopDistanceIR(int _PIN_ONE){
 
     digitalWrite(_PIN_ONE,LOW);
     return true; 
