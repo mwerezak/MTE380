@@ -17,10 +17,16 @@ we are correcting values during testing.
 - function comments will follow the general style of documentation
   as follows:
   /*
-   *Inputs:
-   *Function Description:
-   *Outputs:
-   */
+  * Name         : function
+  *
+  * Synopsis     : int function(int _VAL)   *
+  * Arguments    : int  _VAL : Miscellaneous value 
+  *
+  * Description  : does miscellaneous things to the value given
+  * 
+  * Returns      : int
+  */
+  
 - space argument variables as if writing a sentence. No spaces are required
   for parent brackets unless two brackets are beside each then a space is
   required. 
@@ -29,12 +35,17 @@ we are correcting values during testing.
 
 -MORE WILL BE ADDED AS NEEDED
     
-    
-/*
- *Inputs: N/A
- *Description: Main example program outputs "Helloworld" 10 times
- *Output: 0 - SUCCESS
- */
+ /*
+  * Name         : main
+  *
+  * Synopsis     : void main()   *
+  * Arguments    :
+  *
+  * Description  : Main function outputs "Helloworld" 10 times
+  * 
+  * Returns      :
+  */
+  
 void main(){
     
     int repeatHello;
