@@ -1,3 +1,7 @@
+/*
+Oliphaunt pin mapping.
+*/
+
 #define SOUND_PIN 22
 #define IRC_PIN 24
 #define IRF_PIN_O 26
