@@ -1,9 +1,8 @@
 /*
-Oliphaunt pin mapping.
+    Oliphaunt pin mapping.
 */
 
-#define SOUND_PIN 22
-#define IRC_PIN 24
-#define IRF_PIN_O 26
-#define IRF_PIN_I 0
-#define S_M_ONE 3
+#define USOUND_DATA_PIN 22
+#define PROXIR_PIN 24
+#define DISTIR_CMD_PIN 26
+#define DISTIR_DATA_PIN 0

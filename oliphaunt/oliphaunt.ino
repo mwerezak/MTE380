@@ -1,6 +1,6 @@
 #include <Servo.h>
 #include "PINS.h"
-#include "slib.h"
+#include "sensorlib.h"
 
 long a;
 int time;
@@ -9,11 +9,12 @@ int stoptime;
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
+  pinMode(22, OUTPUT);
 //  pinMode(2, OUTPUT);
 //  a=600;
 //  time = 0;
 //  stoptime = 0;
-  startIRF(IRF_PIN_O); 
+  //startIRF(IRF_PIN_O); 
 }
 
 void loop() {
@@ -26,8 +27,14 @@ void loop() {
 //   }
 //   a = b;
 //  }
-  a =readIRF(IRF_PIN_O,IRF_PIN_I);
-   Serial.println(a);
+  //a =readIRF(IRF_PIN_O,IRF_PIN_I);
+    Serial.println("Hello world!");
+    while(1) {
+        digitalWrite(22, HIGH);
+        delay(200);
+        digitalWrite(22, LOW);
+        delay(200);
+    }
 }
 
 void turn(int pos){
