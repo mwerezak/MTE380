@@ -23,16 +23,25 @@ class Action {
 class ActionManager {
     private:
         Action* currentAction, nextAction;
-    
+        
+        void startNextAction();
+        void killCurrentAction();
+        
     public:
-        // Sets the specified task as the next one to execute after the current one is finished.
-        // Actions that intend to have another task run after they are finished should use this.
-        void setNext(Action *nextAction);
+        // Ctor
+        ActionManager() {
+            currentAction = NULL;
+            nextAction = NULL;
+        }
+    
+        // Sets the specified action as the next one to execute after the current one is finished.
+        // Actions that intend to have another action run after they are finished should use this.
+        void setNext(Action *next);
         
-        // Immediately ends the current task and starts nextAction
-        void forceNext(Action *nextAction);
+        // Immediately ends the current action and starts the specified next one
+        void forceNext(Action *next);
         
-        // Returns a pointer to the current active task.
+        // Returns a pointer to the current active action.
         Action* getActiveAction();
         
         // Called by the main loop.
