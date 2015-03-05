@@ -1,5 +1,5 @@
 /*
-Oliphaunt pin mapping.
+    Oliphaunt pin mapping.
 */
 
 #define USOUND_DATA_PIN 22
