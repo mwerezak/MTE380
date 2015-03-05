@@ -1,6 +1,8 @@
 #ifndef _ACTIONMANAGER_H
 #define _ACTIONMANAGER_H
 
+#include <Arduino.h>
+
 /*
     Encapsulates an action that the robot needs to perform into a group of callbacks.
     Each of the public methods will be called by the ActionManager at the appropriate time.
@@ -14,15 +16,17 @@ class Action {
         virtual void doWork() {}
         
         // Called to check if the task is done
-        virtual bool checkFinished() { return TRUE; }
+        virtual boolean checkFinished() { return true; }
         
         // Called once, after the task has been determined to be finished.
         virtual void cleanup() {}
 };
 
+
+// This probably doesn't actually need to be a class, but whatever.
 class ActionManager {
     private:
-        Action* currentAction, nextAction;
+        Action *currentAction, *nextAction;
         
         void startNextAction();
         void killCurrentAction();

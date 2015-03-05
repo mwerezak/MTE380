@@ -1,12 +1,12 @@
 
 #include "actionmanager.h"
 
-ActionManager::process() {
+void ActionManager::process() {
     if(currentAction) {
         if(currentAction->checkFinished()) {
             killCurrentAction();
         } else {
-            currentAction->doWork()
+            currentAction->doWork();
         }
     }
     
@@ -16,7 +16,7 @@ ActionManager::process() {
     }
 }
 
-ActionManager::startNextAction() {
+void ActionManager::startNextAction() {
     if(!nextAction) return;
     
     currentAction = nextAction;
@@ -25,18 +25,18 @@ ActionManager::startNextAction() {
     currentAction->setup();
 }
 
-ActionManager::killCurrentAction() {
+void ActionManager::killCurrentAction() {
     if(!currentAction) return;
     
     currentAction->cleanup();
     currentAction = NULL;
 }
 
-ActionManager::setNext(Action *next) {
+void ActionManager::setNext(Action *next) {
     nextAction = next;
 }
 
-ActionManager::forceNext(Action *next) {
+void ActionManager::forceNext(Action *next) {
     killCurrentAction();
     setNext(next);
     startNextAction();
