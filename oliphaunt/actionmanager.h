@@ -37,6 +37,6 @@ class ActionManager {
         
         // Called by the main loop.
         void process();
-}
+};
 
 #endif
