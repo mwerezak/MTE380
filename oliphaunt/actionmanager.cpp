@@ -41,3 +41,7 @@ void ActionManager::forceNext(Action *next) {
     setNext(next);
     startNextAction();
 }
+
+Action* ActionManager::getActiveAction() {
+    return currentAction;
+}
