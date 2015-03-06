@@ -1,45 +1,19 @@
-#include <Servo.h>
-#include "PINS.h"
-#include "sensorlib.h"
+#include "movelib.h"
+#include "actionmanager.h"
+#include "example_actions_def.h"
 
-long a;
-int time;
-int stoptime;
+#define PROCESS_DELAY 2000 //microseconds
+
+ActionManager actionManager;
+TurnLeftAction turnLeft;
 
 void setup() {
-  // put your setup code here, to run once:
-  Serial.begin(9600);
-  pinMode(22, OUTPUT);
-//  pinMode(2, OUTPUT);
-//  a=600;
-//  time = 0;
-//  stoptime = 0;
-  //startIRF(IRF_PIN_O); 
+	pinMode(SERVO_DRIVE_CTL_PIN, OUTPUT);
+	
+	actionManager.setNext(&turnLeft);
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-//  for(int b=600;b<=2400;b=b+10){
-//   time =millis();
-//   stoptime = time+abs(a-b);
-//   while(millis()<stoptime){
-//    turn(b);
-//   }
-//   a = b;
-//  }
-  //a =readIRF(IRF_PIN_O,IRF_PIN_I);
-    Serial.println("Hello world!");
-    while(1) {
-        digitalWrite(22, HIGH);
-        delay(200);
-        digitalWrite(22, LOW);
-        delay(200);
-    }
-}
-
-void turn(int pos){
-  digitalWrite(2, HIGH);
-  delayMicroseconds(pos); // Approximately 10% duty cycle @ 1KHz
-  digitalWrite(2, LOW);
-  delay(20);
+	actionManager.process();
+	delayMicroseconds(PROCESS_DELAY);
 }
