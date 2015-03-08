@@ -1,4 +1,0 @@
-
-struct LocationOrientation {};
-
-LocationOrientation trackingGetCurrent();

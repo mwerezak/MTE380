@@ -3,8 +3,6 @@
 
 #include <Arduino.h>
 
-//typedef enum { NONE=0, INT=1, LONG=2, FLOAT=3, UINT=4, ULONG=5 } ActionParamType;
-
 typedef union ActionArgsUnion {
     int intval;
     long longval;
@@ -12,15 +10,6 @@ typedef union ActionArgsUnion {
     unsigned int uintval;
     unsigned long ulongval;
 } ActionArg;
-
-/*
-typedef struct ActionParamStruct {
-    ActionParamType type;
-    ActionParamValue value;
-} ActionParam;
-
-const struct ActionParamStruct NoneParam = { .type = NONE };
-*/
 
 #define MAX_ACTION_ARGS 8
 typedef struct ActionArgsStruct {
@@ -35,10 +24,6 @@ typedef struct ActionArgsStruct {
     Each of the public methods will be called by the ActionManager at the appropriate time.
 */
 class Action {
-    protected:
-        //helper method to check parameters
-        //boolean checkParam(ActionParams *params, int paramIdx, ActionParamType expected);
-    
     public:
         //const char* name = "Action"; //for debugging
         
@@ -67,44 +52,13 @@ class SingletonAction: public Action {
         }
     
     protected:
-        //static TDerivedAction _instance;
         SingletonAction() {}
     
-    /*
+    /* Uncomment this to prevent unwanted copying
     private:
         SingletonAction(SingletonAction const&) = delete;
         void operator=(SingletonAction const&) = delete;
     */
 };
 
-/*
-// This probably doesn't actually need to be a class, but whatever.
-class ActionManager {
-    private:
-        Action *currentAction, *nextAction;
-        
-        void startNextAction();
-        void killCurrentAction();
-        
-    public:
-        // Ctor
-        ActionManager() {
-            currentAction = NULL;
-            nextAction = NULL;
-        }
-    
-        // Sets the specified action as the next one to execute after the current one is finished.
-        // Actions that intend to have another action run after they are finished should use this.
-        void setNext(Action *next);
-        
-        // Immediately ends the current action and starts the specified next one
-        void forceNext(Action *next);
-        
-        // Returns a pointer to the current active action.
-        Action* getActiveAction();
-        
-        // Called by the main loop.
-        void process();
-};
-*/
 #endif
