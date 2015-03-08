@@ -1,5 +1,27 @@
 
-#include "actionmanager.h"
+#include "action.h"
+
+/*
+boolean Action::checkParam(ActionParams *params, int paramIdx, ActionParamType expected) {
+    if(params->plist[paramIdx].type != expected) {
+        Serial.print("ERROR setting up action ");
+        Serial.print(this->name);
+        Serial.print(": bad parameter type for parameter ");
+        Serial.print(paramIdx);
+        Serial.print(" -> got ");
+        Serial.print(params->plist[paramIdx].type);
+        Serial.print(", expected ");
+        Serial.println(expected);
+        return false;
+    }
+    return true;
+}
+*/
+
+
+
+
+/*
 
 void ActionManager::process() {
     if(currentAction != NULL) {
@@ -46,3 +68,4 @@ void ActionManager::forceNext(Action *next) {
 Action* ActionManager::getActiveAction() {
     return currentAction;
 }
+*/

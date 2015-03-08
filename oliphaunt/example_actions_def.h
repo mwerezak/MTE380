@@ -6,23 +6,29 @@
 */
 #include <Arduino.h>
 #include "movelib.h"
-#include "actionmanager.h"
+#include "action.h"
 
-class DriveAction : public Action {
+class DriveAction : public SingletonAction<DriveAction> {
     public:
         char left, right;
         unsigned long end_at;
-        DriveAction(char _left=0, char _right=0, unsigned long duration=0) {
-            left = _left; 
-            right = _right; 
-            end_at = duration;
-        }
-    
-        void setup() {
-            //digitalWrite(SERVO_DRIVE_CTL_PIN, HIGH); //enable drive servos
+        
+        /*
+            Parameter 0: left
+            Parameter 1: right
+            Parameter 2: duration
+        */
+        void setup(ActionArgs *args) {
+            //ActionArg* arglist = _args->list;
+            unsigned long duration;
+            
+            left        = ARGSP(args, 0, intval);
+            right       = ARGSP(args, 1, intval);
+            duration    = ARGSP(args, 2, ulongval);
+            
             analogWrite(SERVO_DRIVE_LEFT_PWM_PIN, SERVO_DRIVE_LEFT_PWM_NEUTRAL + left);
             analogWrite(SERVO_DRIVE_RIGHT_PWM_PIN, SERVO_DRIVE_RIGHT_PWM_NEUTRAL + right);
-            end_at += millis();
+            end_at += duration + millis();
         }
         
         boolean checkFinished() {
