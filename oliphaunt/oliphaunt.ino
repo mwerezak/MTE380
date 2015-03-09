@@ -10,8 +10,6 @@
 
 void setup() {
 	Serial.begin(9600);
-	
-    Serial.println("SETUP");
     
 	initQueue();
 	
@@ -43,13 +41,15 @@ void setup() {
 	queueAction(DriveAction::instance(), right);
 	queueAction(DriveAction::instance(), reverse);
 	queueAction(DriveAction::instance(), left);
-	queueAction(DriveAction::instance(), reverse);
+	//queueAction(DriveAction::instance(), reverse);
 }
 
 void loop() {
-
+    #ifdef AQUEUE_DBG
     Serial.print("queue size: ");
     Serial.println(queueLength());
+    #endif
+    
 	processMain();
 
 	delay(PROCESS_DELAY);
