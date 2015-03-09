@@ -18,6 +18,7 @@ void processMain();
 Action* getCurrentAction();
 boolean queueIsEmpty();
 boolean queueIsFull();
+int queueLength();
 void forceNextAction(Action* next, ActionArgs args);
 void setNextAction(Action* next, ActionArgs args);
 void queueAction(Action* action, ActionArgs args);

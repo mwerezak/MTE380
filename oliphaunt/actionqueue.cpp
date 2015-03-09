@@ -1,18 +1,21 @@
 #include "actionqueue.h"
 
 Action* currentAction;
-int _startIdx, _endIdx; //use half-open interval convention
+int _startIdx, _queueLen;
 ActionQueueItem _actionQueue[ACTION_QUEUE_SIZE];
 
 ActionQueueItem* _removeNext();
 ActionQueueItem* _removeLast();
+int _endIdx();
 
 void _startNextAction();
 void _killCurrentAction();
 
 void initQueue() {
+    Serial.println("initQueue()");
+    
     _startIdx = 0;
-    _endIdx = 1;
+    _queueLen = 0;
 }
 
 void processMain() {
@@ -35,35 +38,6 @@ Action* getCurrentAction() {
     return currentAction;
 }
 
-//returns true if the queue is not empty
-boolean queueIsEmpty() {
-    if(_startIdx == ACTION_QUEUE_SIZE - 1)
-        return (_endIdx == 0);
-    return (_endIdx == _startIdx + 1);
-}
-
-boolean queueIsFull() {
-    return (_startIdx == _endIdx);
-}
-
-//removes and returns the first item in the queue
-ActionQueueItem* _removeNext() {
-    if(queueIsEmpty()) return NULL;
-    
-    ActionQueueItem* removed = &_actionQueue[_startIdx];
-    if(++_startIdx == ACTION_QUEUE_SIZE) _startIdx = 0;
-    return removed;
-}
-
-//removes and returns the last item in the queue
-ActionQueueItem* _removeLast() {
-    if(queueIsEmpty()) return NULL;
-    
-    ActionQueueItem* removed = &_actionQueue[_endIdx];
-    if(--_endIdx == 0) _endIdx = ACTION_QUEUE_SIZE - 1;
-    return removed;
-}
-
 void _startNextAction() {
     ActionQueueItem* nextAction = _removeNext();
     if(nextAction) {
@@ -79,8 +53,6 @@ void _killCurrentAction() {
     currentAction = NULL;
 }
 
-/** Queueing actions **/
-
 //Forces the current action to stop, and starts next. Skips the queue.
 void forceNextAction(Action* next, ActionArgs args) {
     _killCurrentAction();
@@ -88,11 +60,19 @@ void forceNextAction(Action* next, ActionArgs args) {
     currentAction->setup(&args);
 }
 
+/** Queueing actions **/
+
+//Gets the index of the last item in the queue
+int _endIdx() {
+    return (_startIdx + _queueLen - 1)%ACTION_QUEUE_SIZE;
+}
+
 //Adds to the front of the queue, essentially
 void setNextAction(Action* next, ActionArgs args) {
     if(queueIsFull()) return;
     
-    if(--_startIdx == 0) _startIdx = ACTION_QUEUE_SIZE - 1;
+    if(--_startIdx < 0) _startIdx = ACTION_QUEUE_SIZE - 1;
+    _queueLen++;
     
     _actionQueue[_startIdx].action = next;
     _actionQueue[_startIdx].args = args;
@@ -102,8 +82,47 @@ void setNextAction(Action* next, ActionArgs args) {
 void queueAction(Action* action, ActionArgs args) {
     if(queueIsFull()) return;
     
-    if(++_endIdx == ACTION_QUEUE_SIZE) _endIdx = 0;
+    _queueLen++;
     
-    _actionQueue[_endIdx].action = action;
-    _actionQueue[_endIdx].args = args;
+    int endIdx = _endIdx();
+    _actionQueue[endIdx].action = action;
+    _actionQueue[endIdx].args = args;
+}
+
+
+//removes and returns the first item in the queue
+ActionQueueItem* _removeNext() {
+    if(queueIsEmpty()) return NULL;
+    
+    ActionQueueItem* removed = &_actionQueue[_startIdx];
+    
+    if(++_startIdx == ACTION_QUEUE_SIZE) _startIdx = 0;
+    _queueLen--;
+    
+    return removed;
+}
+
+//removes and returns the last item in the queue
+ActionQueueItem* _removeLast() {
+    if(queueIsEmpty()) return NULL;
+    
+    ActionQueueItem* removed = &_actionQueue[_endIdx()];
+    _queueLen--;
+    
+    return removed;
+}
+
+
+//returns true if the queue is not empty
+boolean queueIsEmpty() {
+    return (_queueLen == 0);
+}
+
+boolean queueIsFull() {
+    return (_queueLen == ACTION_QUEUE_SIZE);
+}
+
+//returns the number of items in the queue.
+int queueLength() {
+    return _queueLen;
 }

@@ -26,6 +26,14 @@ class DriveAction : public SingletonAction<DriveAction> {
             right       = ARGSP(args, 1, intval);
             duration    = ARGSP(args, 2, ulongval);
             
+            Serial.print("DriveAction::setup(left: ");
+            Serial.print(left);
+            Serial.print(", right: ");
+            Serial.print(right);
+            Serial.print(", duration: ");
+            Serial.print(duration);
+            Serial.println(")");
+            
             analogWrite(SERVO_DRIVE_LEFT_PWM_PIN, SERVO_DRIVE_LEFT_PWM_NEUTRAL + left);
             analogWrite(SERVO_DRIVE_RIGHT_PWM_PIN, SERVO_DRIVE_RIGHT_PWM_NEUTRAL + right);
             end_at += duration + millis();

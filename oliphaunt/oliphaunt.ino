@@ -4,13 +4,15 @@
 
 /*** MAKE SURE TO UPDATE MOVELIB.H BEFORE UPLOADING ***/
 
-#define PROCESS_DELAY 10 //miliseconds
+#define PROCESS_DELAY 1000 //miliseconds
 
 //ActionManager actionManager;
 
 void setup() {
 	Serial.begin(9600);
 	
+    Serial.println("SETUP");
+    
 	initQueue();
 	
 	ActionArgs forward;
@@ -33,9 +35,8 @@ void setup() {
 	right.list[1].intval = -120;
 	right.list[2].ulongval = 5000;
 	
-	
 	queueAction(DriveAction::instance(), forward);
-	queueAction(DriveAction::instance(), left);
+    queueAction(DriveAction::instance(), left);
 	queueAction(DriveAction::instance(), forward);
 	queueAction(DriveAction::instance(), right);
 	queueAction(DriveAction::instance(), reverse);
@@ -46,6 +47,9 @@ void setup() {
 }
 
 void loop() {
+
+    Serial.print("queue size: ");
+    Serial.println(queueLength());
 	processMain();
 
 	delay(PROCESS_DELAY);
