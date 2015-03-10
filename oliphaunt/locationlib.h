@@ -1,5 +1,5 @@
 void polar2coor(float, float, float *, float *);
-bool addPoint2Regression(float, float, int, float *, float *, int *, float *, float *);
+bool addPoint2Regression(float, float, int, float *, float *, int *, float *, float *, float *);
 /*
  * This function will find the position of the robot relative to the edge of the 
  * course (ramp side). The lego base will be in the positive y direction and the 
@@ -11,4 +11,4 @@ bool addPoint2Regression(float, float, int, float *, float *, int *, float *, fl
  *                    robot's direction
  *    num_readings
  */
-void triangulation(float[], float[], int);
+posn_vect triangulation(float ir_ranges[], float pan_angles[], int num_readings);
