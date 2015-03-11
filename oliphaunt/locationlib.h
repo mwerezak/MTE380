@@ -1,3 +1,12 @@
+struct posn_vect {
+    //The units are cm
+    float x;
+    float y;
+    //The units are rads
+    float theta;
+        //Might add tilt...
+};
+
 void polar2coor(float, float, float *, float *);
 bool addPoint2Regression(float, float, int, float *, float *, int *, float *, float *, float *);
 /*

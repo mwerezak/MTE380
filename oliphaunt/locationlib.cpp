@@ -1,22 +1,31 @@
-
+#include "locationlib.h"
 // Function used to test triangulation function
 
 // int main() {
-//     float m=0.01, b=100, t=50;
+//     fout.open("test_results.txt");
+//     float m=5, b=100, t=50;
 //     int res=1, lin_e=1, ang_e=1;
-//     test_nav(m,b,t,res,lin_e,ang_e);
+//     //for (float i=m;i>0.01;i/=2) {
+//       //  for(int k=0;k<5;k++) {
+//             cin>>m>>t;
+//             fout<<"test w/ m"<<m<<" b "<<b<<" t "<<t<<" res "<<res<<endl;
+//             test_nav(m,b,t,res,lin_e,ang_e);
+//        // }
+//     //}
+//     fout.close();
 //     return 0;
 // }
+
 // void test_nav(float m, float b, float t, int res, int lin_e, int ang_e) {
 //     srand (time(NULL));
 //     // [n][0] = theta, [n][1] = r
-//     float sensor_readings[2][100];
+//     float sensor_readings[2][200];
 //     int i=0, x=0;
 //     float y;
-//     for (x=-t/2;x<=t&&x<100;x+=res) {
+//     for (x=-t/2;x<=t&&x<200;x+=res) {
 //         float noise = (rand() % (ang_e*20) - ang_e*10)*2*PI/(360*10.0);
 //         y = m*x + b;
-//         cout<<"y "<<y<<" x "<<x<<endl;
+//         //cout<<"y "<<y<<" x "<<x<<endl;
 //         if (y == 0)
 //             sensor_readings[0][i]= 0;
 //         else
@@ -24,12 +33,14 @@
 //         float noise2 = (rand() % (ang_e*20) - lin_e*10)/10.0;
 //         sensor_readings[1][i++]=sqrt(x*x + y*y) + noise;
 //     }
+//     cout<<"edge ";
 //     float new_m = 1.0/m, new_b = m*x + b - new_m*x;
 //     int temp = 0;
-//     for (;temp<3 && i<100;temp++) {
+//     for (;temp<10 && i<100;temp++) {
+//         cout<<i<<", ";
 //         float noise = (rand() % (ang_e*20) - ang_e*10)*2*PI/(360*10.0);
 //         y = -1*new_m*(x+temp/10) + new_b;
-//         cout<<"y "<<y<<" x "<<x<<endl;
+//         //cout<<"y "<<y<<" x "<<x<<endl;
 //         if (y == 0)
 //             sensor_readings[0][i]= 0;
 //         else
@@ -37,8 +48,10 @@
 //         float noise2 = (rand() % (ang_e*20) - lin_e*10)/10.0;
 //         sensor_readings[1][i++]=sqrt(x*x + y*y) + noise;
 //     }
+//     cout<<endl;
+
 //     for (int j=0;j<i;j++) {
-//         cout<<"["<<sensor_readings[1][j]<<"cm, "<<sensor_readings[0][j]*360/(2*PI)<<"]"<<endl;
+//         //cout<<"["<<sensor_readings[1][j]<<"cm, "<<sensor_readings[0][j]*360/(2*PI)<<"]"<<endl;
 //     }
 //     triangulation(sensor_readings[1], sensor_readings[0], i);
 // }
@@ -61,8 +74,8 @@ bool addPoint2Regression(float x, float y, int total_points, float *sum_x, float
     // if new point is below variance times fudge factor
     // the fudge factor becomes smaller the more samples 
     // are taken since it should begin to converge
-    float scaling = (((-20.0+1.0/20)*(*points))/total_points) + 20;
-    if (abs(y - (m*x + b))/scaling <= sqrt((*SSyy)/(*points)) || *points < total_points/8 + 10) {
+    float scaling =  2; //(((-20.0+1.0/20)*(*points))/total_points) + 20;
+    if (abs(y - (m*x + b))/scaling <= sqrt(abs(*SSyy)/(*points)) || *points < 30) {
         // update regression
         (*sum_x)+=x;
         (*sum_y)+=y;
@@ -72,23 +85,13 @@ bool addPoint2Regression(float x, float y, int total_points, float *sum_x, float
         (*SSyy)+=(y - (*sum_y)/(*points))*(y - (*sum_y)/(*points));
         //cout<<(*sum_x)<<", "<<(*sum_y)<<", "<<(*points)<<", "<<(*SSxy)<<", "<<(*SSxx)<<endl;
         //cout<<*points<<", "<<(y - (m*x + b))<<", "<<sqrt((*SSxy)/(*points))<<" Accepted with scaling "<<scaling<<endl<<endl;
+        //fout<<","<<(y - (m*x + b))<<","<<sqrt((*SSxy)/(*points))<<","<<x<<","<<y<<","<<m<<","<<b<<endl;
         return true;
     }
-    cout<<y - (m*x + b)<<", "<<sqrt((*SSxy)/(*points))<<endl<<endl;
+    cout<<y - (m*x + b)<<", "<<sqrt(abs(*SSxy)/(*points))<<endl<<endl;
     return false;
 }
 
-/*
- * This function will find the position of the robot relative to the edge of the 
- * course (ramp side). The lego base will be in the positive y direction and the 
- * opposing wall edge will be the negative x direction. The angle will be taken
- * between the direction of the robot and the positive y axis.
- * args:
- *    ir_ranges[] -> array with the ranges recieved from the IR sensor
- *    pan_angles[] -> array with the angles from the panning motor w/r to the
- *                    robot's direction
- *    num_readings
- */
 posn_vect triangulation(float ir_ranges[], float pan_angles[], int num_readings) {
     float sum_x=0, sum_y=0;
     float m_test=0, b_test=0, x_0=0, y_0=0, x_1=0, y_1=0;
@@ -107,7 +110,7 @@ posn_vect triangulation(float ir_ranges[], float pan_angles[], int num_readings)
             min_angle = temp;            
         }
     }
-    cout<<"midpoint: "<<midpoint<<endl<<endl;
+    //cout<<"midpoint: "<<midpoint<<endl<<endl;
 
     //Calulate rough regression to remove outliers and find edges
     float x_temp, y_temp, x_temp1, y_temp1, SSxy=0, SSxx=0, SSyy=0, x, y, m=0, b=0;
@@ -131,7 +134,7 @@ posn_vect triangulation(float ir_ranges[], float pan_angles[], int num_readings)
         x_temp=0;
         // Add point to the right of centre
         if (midpoint+i < num_readings) {
-            cout<<"point: "<<midpoint+i<<endl;
+            //fout<<midpoint+i;
             polar2coor(ir_ranges[midpoint+i], pan_angles[midpoint+i], &x_temp, &y_temp);
             if (addPoint2Regression(x_temp,y_temp,num_readings,&sum_x,&sum_y,&points_used,&SSxx,&SSyy,&SSxy)) {
                 is_edge_0=false;
@@ -142,9 +145,9 @@ posn_vect triangulation(float ir_ranges[], float pan_angles[], int num_readings)
                 if (!is_edge_0) {
                     is_edge_0=true;
                 edge_0=midpoint+i;
-                    cout<<"edge set at point"<<midpoint+i<<endl;
+                    //cout<<"edge set at point"<<midpoint+i<<endl;
                 } else {
-                    cout<<"passed edge"<<endl;
+                    //cout<<"passed edge"<<endl;
                 }
                 // This data point to be ignored in final regression
                 ir_ranges[midpoint+i]*=-1;
@@ -155,7 +158,7 @@ posn_vect triangulation(float ir_ranges[], float pan_angles[], int num_readings)
         y_temp=0;
         x_temp=0;
         if (midpoint-i > 0) {
-            cout<<"point: "<<midpoint-i<<endl;
+            //fout<<midpoint-i;
             polar2coor(ir_ranges[midpoint-i], pan_angles[midpoint-i], &x_temp, &y_temp);
             if (addPoint2Regression(x_temp,y_temp,num_readings,&sum_x,&sum_y,&points_used,&SSxx,&SSyy,&SSxy)) {
                 is_edge_0=false;
@@ -166,9 +169,9 @@ posn_vect triangulation(float ir_ranges[], float pan_angles[], int num_readings)
                 if (!is_edge_0) {
                     is_edge_0=true;
                     edge_0=midpoint-i;
-                    cout<<"edge set at point"<<midpoint-i<<endl;
+                    //cout<<"edge set at point"<<midpoint-i<<endl;
                 } else {
-                    cout<<"passed edge"<<endl;
+                    //cout<<"passed edge"<<endl;
                 }
                 // This data point to be ignored in final regression
                 ir_ranges[midpoint+i]*=-1;
@@ -189,8 +192,8 @@ posn_vect triangulation(float ir_ranges[], float pan_angles[], int num_readings)
     }
     m=SSxy/SSxx;
     b=(sum_y - m*sum_x)/points_used;
-    cout<<"m-> "<<m<<" b-> "<<b<<endl;
-    cout<<"edge 0 "<<edge_0<<" edge 1 "<<edge_1<<endl;
+    //cout<<"m-> "<<m<<" b-> "<<b<<endl;
+    //cout<<"edge 0 "<<edge_0<<" edge 1 "<<edge_1<<endl;
     float r_edge, a_edge;
     bool is_origin_edge = true;
     posn_vect retVal={0,0,0};
@@ -208,6 +211,6 @@ posn_vect triangulation(float ir_ranges[], float pan_angles[], int num_readings)
     retVal.theta=atan(is_origin_edge?m:-m);
     retVal.x=r_edge*sin(PI/2 - a_edge - retVal.theta);
     retVal.y=r_edge*cos(PI/2 - a_edge - retVal.theta);
-    cout<<retVal.x<<", "<<retVal.y<<", "<<retVal.theta<<endl;
+    //cout<<retVal.x<<", "<<retVal.y<<", "<<retVal.theta<<endl;
     return retVal;    
 }
