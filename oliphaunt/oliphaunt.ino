@@ -33,14 +33,14 @@ void setup() {
 	right.list[1].intval = -120;
 	right.list[2].ulongval = 5000;
 	
-	queueAction(DriveAction::instance(), forward);
-    queueAction(DriveAction::instance(), left);
-	queueAction(DriveAction::instance(), forward);
-	queueAction(DriveAction::instance(), right);
-	queueAction(DriveAction::instance(), reverse);
-	queueAction(DriveAction::instance(), right);
-	queueAction(DriveAction::instance(), reverse);
-	queueAction(DriveAction::instance(), left);
+	queueAction(DriveAction::instance(), &forward);
+    queueAction(DriveAction::instance(), &left);
+	queueAction(DriveAction::instance(), &forward);
+	queueAction(DriveAction::instance(), &right);
+	queueAction(DriveAction::instance(), &reverse);
+	queueAction(DriveAction::instance(), &right);
+	queueAction(DriveAction::instance(), &reverse);
+	queueAction(DriveAction::instance(), &left);
 	//queueAction(DriveAction::instance(), reverse);
 }
 

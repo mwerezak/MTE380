@@ -45,7 +45,7 @@ Action* getCurrentAction() {
 }
 
 void _startNextAction() {
-    ActionQueueItem* nextAction = _removeNext();
+    ActionQueueItem *nextAction = _removeNext();
     if(nextAction) {
         currentAction = nextAction->action;
         currentAction->setup(&nextAction->args);
@@ -60,10 +60,10 @@ void _killCurrentAction() {
 }
 
 //Forces the current action to stop, and starts next. Skips the queue.
-void forceNextAction(Action* next, ActionArgs args) {
+void forceNextAction(Action *next, ActionArgs *args) {
     _killCurrentAction();
     currentAction = next;
-    currentAction->setup(&args);
+    currentAction->setup(args);
 }
 
 /** Queueing actions **/
@@ -74,25 +74,25 @@ int _endIdx() {
 }
 
 //Adds to the front of the queue, essentially
-void setNextAction(Action* next, ActionArgs args) {
+void setNextAction(Action *next, ActionArgs *args) {
     if(queueIsFull()) return;
     
     if(--_startIdx < 0) _startIdx = ACTION_QUEUE_SIZE - 1;
     _queueLen++;
     
     _actionQueue[_startIdx].action = next;
-    _actionQueue[_startIdx].args = args;
+    _actionQueue[_startIdx].args = *args;
 }
 
 //Adds to the end of the queue
-void queueAction(Action* action, ActionArgs args) {
+void queueAction(Action *action, ActionArgs *args) {
     if(queueIsFull()) return;
     
     _queueLen++;
     
     int endIdx = _endIdx();
     _actionQueue[endIdx].action = action;
-    _actionQueue[endIdx].args = args;
+    _actionQueue[endIdx].args = *args;
 }
 
 
@@ -112,7 +112,7 @@ ActionQueueItem* _removeNext() {
 ActionQueueItem* _removeLast() {
     if(queueIsEmpty()) return NULL;
     
-    ActionQueueItem* removed = &_actionQueue[_endIdx()];
+    ActionQueueItem *removed = &_actionQueue[_endIdx()];
     _queueLen--;
     
     return removed;
