@@ -7,8 +7,19 @@ struct posn_vect {
         //Might add tilt...
 };
 
+//working state used in regression calculation
+struct RegressionData {
+    int points;
+    float sum_x;
+    float sum_y;
+    float SSxx;
+    float SSyy;
+    float SSxy;
+};
+
 void polar2coor(float, float, float *, float *);
-bool addPoint2Regression(float, float, int, float *, float *, int *, float *, float *, float *);
+
+bool addPoint2Regression(float, float, int, RegressionData *);
 /*
  * This function will find the position of the robot relative to the edge of the 
  * course (ramp side). The lego base will be in the positive y direction and the 
