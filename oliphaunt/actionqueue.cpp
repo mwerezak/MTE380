@@ -66,6 +66,23 @@ void forceNextAction(Action *next, ActionArgs *args) {
     currentAction->setup(args);
 }
 
+/** Suspending and Restarting **/
+
+Action* suspendCurrentAction() {
+    if(!currentAction) return NULL;
+
+    Action *suspended = currentAction;
+    currentAction = NULL;
+    return suspended;
+}
+
+//Basically like forceNextAction but doesn't call setup.
+//Will kill the current action unless it has been suspended first.
+void restartAction(Action *action) {
+    _killCurrentAction();
+    currentAction = action;
+}
+
 /** Queueing actions **/
 
 //Gets the index of the last item in the queue
