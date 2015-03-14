@@ -8,8 +8,8 @@ ActionQueueItem* _removeNext();
 ActionQueueItem* _removeLast();
 int _endIdx();
 
+void _startAction(Action *action, ActionArgs *args);
 void _startNextAction();
-void _killCurrentAction();
 
 void _debugQueue(char* message) {
     #ifdef AQUEUE_DBG
@@ -27,7 +27,7 @@ void initQueue() {
 void processMain() {
     if(currentAction) {
         if(currentAction->checkFinished()) {
-            _killCurrentAction();
+            killCurrentAction();
         } else {
             currentAction->doWork();
         }
@@ -44,43 +44,47 @@ Action* getCurrentAction() {
     return currentAction;
 }
 
+//puts an action into the running state
+void _startAction(Action *action, ActionArgs *args) {
+    ProcessStatus status = action->getProcessStatus();
+    if(status == STOPPED)
+        action->start(args);
+    else if(status == SUSPENDED)
+        action->restart();
+}
+
+//pops the next action off the queue and starts it.
 void _startNextAction() {
     ActionQueueItem *nextAction = _removeNext();
     if(nextAction) {
         currentAction = nextAction->action;
-        currentAction->setup(&nextAction->args);
+        _startAction(currentAction, &nextAction->args);
     }
-}
-
-void _killCurrentAction() {
-    if(!currentAction) return;
-    
-    currentAction->cleanup();
-    currentAction = NULL;
 }
 
 //Forces the current action to stop, and starts next. Skips the queue.
 void forceNextAction(Action *next, ActionArgs *args) {
-    _killCurrentAction();
+    killCurrentAction();
     currentAction = next;
-    currentAction->setup(args);
+    _startAction(currentAction, args);
 }
 
-/** Suspending and Restarting **/
+Action* killCurrentAction() {
+    if(!currentAction) return NULL;
+    
+    Action *stopped = currentAction;
+    currentAction->stop();
+    currentAction = NULL;
+    return stopped;
+}
 
 Action* suspendCurrentAction() {
     if(!currentAction) return NULL;
 
     Action *suspended = currentAction;
+    currentAction->suspend();
     currentAction = NULL;
     return suspended;
-}
-
-//Basically like forceNextAction but doesn't call setup.
-//Will kill the current action unless it has been suspended first.
-void restartAction(Action *action) {
-    _killCurrentAction();
-    currentAction = action;
 }
 
 /** Queueing actions **/

@@ -4,12 +4,12 @@
 #ifndef _ACTIONQUEUE_H
 #define _ACTIONQUEUE_H
 
+#define ACTION_QUEUE_SIZE 20
+
 typedef struct ActionQueueItemStruct {
     Action *action;
     ActionArgs args;
 } ActionQueueItem;
-
-#define ACTION_QUEUE_SIZE 20
 
 /*
     Note: Actions themselves are not stored in the queue, only pointers.
@@ -39,12 +39,9 @@ void setNextAction(Action *next, ActionArgs *args);
 void queueAction(Action *action, ActionArgs *args);
 
 //Returns the action that has been suspended. 
-//Suspended actions should not be put back on the queue ATM. Use restartAction() instead.
-//Support for queueing suspended actions should be easy to add if it is needed.
 Action* suspendCurrentAction();
 
-//Basically like forceNextAction but doesn't call setup.
-//Will kill the current action unless it has been suspended first.
-void restartAction(Action *action);
+//Returns the action that has been stopped.
+Action* killCurrentAction();
 
 #endif
