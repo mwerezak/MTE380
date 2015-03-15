@@ -97,6 +97,7 @@ void queueAction(Action *action, ActionArgs *args) {
 
 
 //removes and returns the first item in the queue
+//If anything is subsequently added to the queue the returned pointer may be invalidated!
 ActionQueueItem* _removeNext() {
     if(queueIsEmpty()) return NULL;
     
@@ -109,6 +110,7 @@ ActionQueueItem* _removeNext() {
 }
 
 //removes and returns the last item in the queue
+//If anything is subsequently added to the queue the returned pointer may be invalidated!
 ActionQueueItem* _removeLast() {
     if(queueIsEmpty()) return NULL;
     

@@ -25,7 +25,8 @@ typedef struct ActionArgsStruct {
 */
 class Action {
     public:
-        //const char* name = "Action"; //for debugging
+        // For debugging
+        virtual char* getName() { return "Action"; }
         
         // Called once, when the task is first made active.
         virtual void setup(ActionArgs *args) {}
