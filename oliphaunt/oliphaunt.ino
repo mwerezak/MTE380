@@ -1,26 +1,29 @@
+
+#include <L3G.h>
+#include <Wire.h>
+
 #include "movelib.h"
 #include "actionqueue.h"
+#include "gyro_driver.h"
+#include "common.h"
 
-/*** MAKE SURE TO UPDATE MOVELIB.H BEFORE UPLOADING ***/
-
-#define PROCESS_DELAY 1000 //miliseconds
+//#define PROCESS_DELAY 1000 //miliseconds
 
 //ActionManager actionManager;
 
 void setup() {
-	Serial.begin(9600);
+	Serial.begin(115200);
+	Wire.begin();
     
+	Serial.println("Initializing gyro...");
+	initGyro();
+	
+	Serial.println("Initializing action queue...");
 	initQueue();
 	
 }
 
 void loop() {
-    #ifdef AQUEUE_DBG
-    Serial.print("queue size: ");
-    Serial.println(queueLength());
-    #endif
-    
 	processMain();
-
-	delay(PROCESS_DELAY);
+	updateGyro();
 }
