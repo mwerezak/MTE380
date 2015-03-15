@@ -1,10 +1,21 @@
 #ifndef _MOVELIB_H
 #define _MOVELIB_H
 
-#define SERVO_DRIVE_CTL_PIN             -1 //not used
-#define SERVO_DRIVE_LEFT_PWM_PIN        11
-#define SERVO_DRIVE_LEFT_PWM_NEUTRAL    120 //idk man
-#define SERVO_DRIVE_RIGHT_PWM_PIN       12
-#define SERVO_DRIVE_RIGHT_PWM_NEUTRAL   120
+#include "action.h"
+
+class TurnInPlaceToHeadingAction : public SingletonAction<TurnInPlaceToHeadingAction> {
+private:
+    static const int Gain = 10; 
+    static const float Tolerance = 3; //degrees
+    
+    float targetHeading;
+    float targetBearing;
+public:
+    virtual char* getName() { return "TurnInPlaceToHeadingAction"; }
+    virtual void setup(ActionArgs *args);
+    virtual boolean checkFinished();
+    virtual void doWork();
+    virtual void cleanup();
+};
 
 #endif

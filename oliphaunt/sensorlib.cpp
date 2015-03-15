@@ -11,8 +11,6 @@
 #include "sensorlib.h"
 
 /*
- * Name         : readSound
- *
  * Synopsis     : long readSound(int _PIN)   *
  * Arguments    : int  _PIN : Digital pin number of Sonar sensor
  *
@@ -34,8 +32,6 @@ long readSound(int _PIN){
 }//end readSound
 
 /*
- * Name         : readIRC
- *
  * Synopsis     : bool readIRC(int _PIN) *
  * Arguments    : int  _PIN : Digital pin number of proximity IR sensor
  *
@@ -51,8 +47,6 @@ bool readProxIR(int _PIN){
 }//end readIRC
 
 /*
- * Name         : startIRF
- *
  * Synopsis     : bool startIRF(int _PIN_ONE) *
  * Arguments    : int  _PIN_ONE : Digital input pin of long distance IR sensor
  *
@@ -69,8 +63,6 @@ bool startDistanceIR(int _PIN_ONE){
 }//end startIRF
 
 /*
- * Name         : readIRF
- *
  * Synopsis     : float readIRF(int _PIN_ONE, int _PIN_TWO) *
  * Arguments    : int  _PIN_ONE : Analogue output pin of long
                                   distance IR sensor
@@ -90,8 +82,6 @@ float readDistanceIR(int _PIN_ONE){
 }//end readIRF
 
 /*
- * Name         : stopIRF
- *
  * Synopsis     : bool stopIRF(int _PIN_ONE) *
  * Arguments    : int  _PIN_ONE : Digital input pin of long distance IR sensor
  *
