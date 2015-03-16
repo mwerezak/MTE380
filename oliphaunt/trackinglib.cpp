@@ -1,3 +1,4 @@
+#define DBG_GYRO_TRACKING
 
 #include "trackinglib.h"
 
@@ -5,7 +6,7 @@
 #include "numericlib.h"
 #include "gyro_driver.h"
 
-EulerIntegrator hdgIntegrator;
+AdamsBashforthIntegrator hdgIntegrator;
 EulerIntegrator pitchIntegrator;
 
 void initTracking() {
@@ -41,7 +42,7 @@ void setCurrentHeading(float newHdg) {
 }
 
 float getCurrentHeading() {
-    return normalizeAngle(hdgIntegrator.getResult(millis()), 360);
+    return normalizeAngle(hdgIntegrator.evalResult(millis()), 360);
 }
 
 void setCurrentPitch(float newPitch) {
@@ -49,7 +50,7 @@ void setCurrentPitch(float newPitch) {
 }
 
 float getCurrentPitch() {
-    return normalizeAngle(pitchIntegrator.getResult(millis()), 180);
+    return normalizeAngle(pitchIntegrator.evalResult(millis()), 180);
 }
 
 
