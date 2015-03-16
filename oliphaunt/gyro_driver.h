@@ -1,3 +1,4 @@
+
 //#define DBG_GYRO
 
 #ifndef _GYRO_DRIVER_H
@@ -6,7 +7,7 @@
 #include <L3G.h>
 #include <Arduino.h>
 
-#define GYRO_READ_DELAY 80 //12.5 Hz
+#define GYRO_READ_DELAY 5 //200 Hz
 
 // L3G4200D gyro: 245 dps full scale
 // 8.75 mdps/digit; 1 dps = 0.00875

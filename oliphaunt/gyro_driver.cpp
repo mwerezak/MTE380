@@ -15,8 +15,7 @@ void initGyro() {
     
     gyro.enableDefault();
     gyro.writeReg(L3G::CTRL_REG4, 0x00); // 245 dps full scale
-    gyro.writeReg(L3G::LOW_ODR,   0x01); // low ODR mode
-    gyro.writeReg(L3G::CTRL_REG1, 0x0F); // normal power mode, all axes enabled, 12.5 Hz
+    gyro.writeReg(L3G::CTRL_REG1, 0x4F); // normal power mode, all axes enabled, 200 Hz ODR, 12.5 Hz BW
     
     delay(50);
     
@@ -25,7 +24,7 @@ void initGyro() {
 }
 
 //Updates gyro offset
-#define GYRO_CALBR_NUM_SAMPLES 64
+#define GYRO_CALBR_NUM_SAMPLES 128
 void calibrateGyro() {
     //figure out the zero position
     long totalx = 0, totaly = 0, totalz = 0;

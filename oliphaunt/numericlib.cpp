@@ -1,6 +1,12 @@
 
+//#define DBG_ABINTEGRATOR
+//#define PERF_ABINTEGRATOR
+
 #include "numericlib.h"
 #include <Arduino.h>
+#include "utility.h"
+
+#define MSEC_TO_SEC 1000 //number of ms in a second
 
 /** Euler Integrator **/
 
@@ -15,7 +21,7 @@ void EulerIntegrator::reset(float init_value) {
 }
 
 double EulerIntegrator::eulerStep(unsigned long timestep) {
-    return last_value + timestep*last_diff/1000;
+    return last_value + timestep*last_diff/MSEC_TO_SEC;
 }
 
 void EulerIntegrator::feedData(float differential, unsigned long update_time) {
@@ -53,6 +59,10 @@ void AdamsBashforthIntegrator::reset(float init_value) {
 }
 
 void AdamsBashforthIntegrator::feedData(float _update_diff, unsigned long _update_time) {
+    #ifdef PERF_ABINTEGRATOR
+    unsigned long timer = micros();
+    #endif
+
     //update the accumulated value to the next step
     if(update_count >= ABI_BUF_SIZE) {
         last_value = adamsBashforthStep(_update_time - update_time[0]);
@@ -63,9 +73,18 @@ void AdamsBashforthIntegrator::feedData(float _update_diff, unsigned long _updat
         update_count++;
     }
     
-    //push the new values into the buffers
+    //push the new values onto the buffers
     pushArray<unsigned long>(update_time, _update_time);
     pushArray<float>(update_diff, _update_diff);
+    
+    
+    #ifdef PERF_ABINTEGRATOR
+    timer = micros() - timer;
+    
+    char str[80];
+    snprintf(str, 80, "Evaluation took %hd microseconds.", timer);
+    Serial.println(str);
+    #endif
 }
 
 float AdamsBashforthIntegrator::getLastResult(unsigned long *last_update_time) {
@@ -79,7 +98,7 @@ float AdamsBashforthIntegrator::evalResult(unsigned long eval_time) {
 }
 
 float AdamsBashforthIntegrator::eulerStep(unsigned long eval_timestep) {
-    return last_value + eval_timestep*update_diff[0]/1000;
+    return last_value + eval_timestep*update_diff[0]/MSEC_TO_SEC;
 }
 
 float AdamsBashforthIntegrator::adamsBashforthStep(unsigned long eval_timestep) {
@@ -94,15 +113,15 @@ float AdamsBashforthIntegrator::adamsBashforthStep(unsigned long eval_timestep) 
         );
     
     //we handle time in u/ms, so convert back to s before evaluating
-    return last_value + update/1000;
+    return last_value + update/MSEC_TO_SEC;
 }
 
 // Pushes a new value onto the front of an array,
 // shifting the array to the right and discarding the last element
 template<typename T>
 void AdamsBashforthIntegrator::pushArray(T array[], T new_val) {
-    for(int i = 0; i < ABI_BUF_SIZE - 1; i++) {
-        array[i+1] = array[i]; //shift
+    for(int i = ABI_BUF_SIZE-1; i > 0; i--) {
+        array[i] = array[i-1]; //shift
     }
     array[0] = new_val;
 }
@@ -110,11 +129,11 @@ void AdamsBashforthIntegrator::pushArray(T array[], T new_val) {
 //Does most of the heavy lifting
 void AdamsBashforthIntegrator::calcBetas(unsigned long eval_timestep) {
     double num, den;
-    unsigned long step[ABI_BUF_SIZE];
-    step[0] = eval_timestep;
-    step[1] = update_time[0] - update_time[1];
-    step[2] = update_time[1] - update_time[2];
-    step[3] = update_time[2] - update_time[3];
+    double step[ABI_BUF_SIZE];
+    step[0] = double(eval_timestep);
+    step[1] = double(update_time[0] - update_time[1]);
+    step[2] = double(update_time[1] - update_time[2]);
+    step[3] = double(update_time[2] - update_time[3]);
     
     // calculate beta[0]
     num = 3*CUBE(step[0])
@@ -160,5 +179,9 @@ void AdamsBashforthIntegrator::calcBetas(unsigned long eval_timestep) {
     den = 12*step[3]*(step[2] + step[3])*(step[1] + step[2] + step[3]);
     
     beta[3] = -num*step[0]/den;
-    
+
+    #ifdef DBG_ABINTEGRATOR
+    printArray<double>(step, ABI_BUF_SIZE, "step");
+    printArray<double>(beta, ABI_BUF_SIZE, "beta");
+    #endif
 }

@@ -1,3 +1,4 @@
+#define DBG_GYRO_TRACKING
 
 #include "trackinglib.h"
 
@@ -5,7 +6,7 @@
 #include "numericlib.h"
 #include "gyro_driver.h"
 
-EulerIntegrator hdgIntegrator;
+AdamsBashforthIntegrator hdgIntegrator;
 EulerIntegrator pitchIntegrator;
 
 void initTracking() {
