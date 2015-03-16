@@ -47,13 +47,15 @@ void calibrateGyro() {
     #endif
 }
 
-void updateGyro() {
+boolean updateGyro() {
     if(millis() - lastUpdateTime >= GYRO_READ_DELAY) {
         gyro.read();
         lastUpdateTime = millis();
         
         _printDebug();
+        return true;
     }
+    return false;
 }
 
 raw_gyro_data getGyroRaw() {

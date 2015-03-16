@@ -1,10 +1,10 @@
-#define DBG_GYRO
+//#define DBG_GYRO
 
 #ifndef _GYRO_DRIVER_H
 #define _GYRO_DRIVER_H
 
 #include <L3G.h>
-#include "common.h"
+#include <Arduino.h>
 
 #define GYRO_READ_DELAY 20 //50 Hz
 
@@ -18,7 +18,7 @@
 #define GYRO_SIGN_Y 1
 #define GYRO_SIGN_Z 1
 
-typedef L3G::vector<int16_t> raw_gyro_data; //raw gyro data type
+typedef L3G::vector<int16_t> raw_gyro_data; //gyro raw data type
 
 typedef struct GyroReadingsStruct {
     unsigned long update_time;
@@ -29,8 +29,13 @@ typedef struct GyroReadingsStruct {
 
 void initGyro();
 void calibrateGyro();
-void updateGyro();
+
+// Returns true if fresh data was actually retrieved from the gyro
+boolean updateGyro();
+
+// Gets the raw values from the gyro
 raw_gyro_data getGyroRaw();
+
 gyro_data getGyroReading();
 
 

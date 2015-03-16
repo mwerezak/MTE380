@@ -2,10 +2,9 @@
 #include <L3G.h>
 #include <Wire.h>
 
-#include "movelib.h"
 #include "actionqueue.h"
-#include "gyro_driver.h"
-#include "common.h"
+#include "movelib.h"
+#include "trackinglib.h"
 
 //#define PROCESS_DELAY 1000 //miliseconds
 
@@ -14,9 +13,9 @@
 void setup() {
 	Serial.begin(115200);
 	Wire.begin();
-    
-	Serial.println("Initializing gyro...");
-	initGyro();
+	
+	Serial.println("Initializing tracking...");
+	initTracking();
 	
 	Serial.println("Initializing action queue...");
 	initQueue();
@@ -25,5 +24,5 @@ void setup() {
 
 void loop() {
 	processMain();
-	updateGyro();
+	processTracking();
 }
