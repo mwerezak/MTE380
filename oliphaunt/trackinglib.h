@@ -22,10 +22,13 @@
     Orientation in the vehicle coord system are referred to as bearings.
 */
 
-#define DBG_GYRO_TRACKING
+//#define DBG_GYRO_TRACKING
 
 #ifndef _TRACKINGLIB_H
 #define _TRACKINGLIB_H
+
+#define GYRO_HDG_AXIS x
+#define GYRO_PITCH_AXIS z
 
 float normalizeAngle(float angle, float max_angle);
 float headingToBearing(float heading);

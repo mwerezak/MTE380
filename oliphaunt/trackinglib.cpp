@@ -21,8 +21,8 @@ void initTracking() {
 void processTracking() {
     if(updateGyro()) {
         gyro_data gyro = getGyroReading();
-        hdgIntegrator.feedData(gyro.x, gyro.update_time);
-        pitchIntegrator.feedData(gyro.z, gyro.update_time);
+        hdgIntegrator.feedData(gyro.GYRO_HDG_AXIS, gyro.update_time);
+        pitchIntegrator.feedData(gyro.GYRO_PITCH_AXIS, gyro.update_time);
         
         #ifdef DBG_GYRO_TRACKING
         Serial.print("Hdg: ");
