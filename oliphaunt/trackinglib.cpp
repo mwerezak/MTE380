@@ -4,6 +4,7 @@
 #include <Arduino.h>
 #include "numericlib.h"
 #include "gyro_driver.h"
+#include "accmag_driver.h"
 
 EulerIntegrator hdgIntegrator;
 EulerIntegrator pitchIntegrator;
@@ -12,6 +13,9 @@ void initTracking() {
     //initialize sensors
     Serial.println("Initializing gyro...");
     initGyro();
+    
+    Serial.println("Initializing accelerometer/magnetometer...");
+    initAccMag();
 
     //initialize integrators
     setCurrentHeading(0.0);
@@ -30,6 +34,12 @@ void processTracking() {
         Serial.print(", Pitch: ");
         Serial.print(getCurrentPitch());
         Serial.println();
+        #endif
+    }
+    
+    if(updateAcc()) {
+    
+        #ifdef DBG_INS_TRACKING
         #endif
     }
 }
