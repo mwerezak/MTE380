@@ -3,9 +3,13 @@
 
 #include "action.h"
 
+/*
+    Parameters:
+    0 - floatval: The target heading
+*/
 class TurnInPlaceToHeadingAction : public SingletonAction<TurnInPlaceToHeadingAction> {
 private:
-    static const int Gain = 10; 
+    static const int GainDiv = 10; 
     static const float Tolerance = 3; //degrees
     
     float targetHeading;

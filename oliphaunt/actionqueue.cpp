@@ -11,15 +11,7 @@ int _endIdx();
 void _startNextAction();
 void _killCurrentAction();
 
-void _debugQueue(char* message) {
-    #ifdef AQUEUE_DBG
-    Serial.println(message);
-    #endif
-}
-
-void initQueue() {
-    _debugQueue("initQueue()");
-    
+void initQueue() {    
     _startIdx = 0;
     _queueLen = 0;
 }
@@ -35,9 +27,17 @@ void processMain() {
     
     //check currentAction again in case it was killed.
     if(!currentAction) {
-        _debugQueue("startNextAction");
+        #ifdef DBG_ACTION_QUEUE
+        Serial.println("startNextAction");
+        #endif
+        
         _startNextAction();
     }
+    
+    #ifdef DBG_ACTION_QUEUE
+    Serial.print("queue length: ");
+    Serial.println(queueLength());
+    #endif
 }
 
 Action* getCurrentAction() {

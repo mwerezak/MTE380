@@ -12,15 +12,11 @@ void driveServosNeutral() {
 }
 
 void driveServoLeft(char command) {
-    int pwm = SERVO_DRIVE_LEFT_PWM_STOP + command;
-    if(pwm < SERVO_DRIVE_LEFT_PWM_MIN) pwm = SERVO_DRIVE_LEFT_PWM_MIN;
-    if(pwm > SERVO_DRIVE_LEFT_PWM_MAX) pwm = SERVO_DRIVE_LEFT_PWM_MAX;
+    byte pwm = constrain(SERVO_DRIVE_LEFT_PWM_STOP + command, SERVO_DRIVE_LEFT_PWM_MIN, SERVO_DRIVE_LEFT_PWM_MAX);
     analogWrite(SERVO_DRIVE_LEFT_PWM_PIN, pwm);
 }
 
 void driveServoRight(char command) {
-    int pwm = SERVO_DRIVE_RIGHT_PWM_STOP + command;
-    if(pwm < SERVO_DRIVE_RIGHT_PWM_MIN) pwm = SERVO_DRIVE_RIGHT_PWM_MIN;
-    if(pwm > SERVO_DRIVE_RIGHT_PWM_MAX) pwm = SERVO_DRIVE_RIGHT_PWM_MAX;
+    byte pwm = constrain(SERVO_DRIVE_RIGHT_PWM_STOP + command, SERVO_DRIVE_RIGHT_PWM_MIN, SERVO_DRIVE_RIGHT_PWM_MAX);
     analogWrite(SERVO_DRIVE_RIGHT_PWM_PIN, pwm);
 }
