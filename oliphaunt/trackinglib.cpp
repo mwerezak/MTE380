@@ -41,7 +41,7 @@ void setCurrentHeading(float newHdg) {
 }
 
 float getCurrentHeading() {
-    return normalizeAngle(hdgIntegrator.getResult(millis()), 360);
+    return normalizeAngle(hdgIntegrator.evalResult(millis()), 360);
 }
 
 void setCurrentPitch(float newPitch) {
@@ -49,7 +49,7 @@ void setCurrentPitch(float newPitch) {
 }
 
 float getCurrentPitch() {
-    return normalizeAngle(pitchIntegrator.getResult(millis()), 180);
+    return normalizeAngle(pitchIntegrator.evalResult(millis()), 180);
 }
 
 
