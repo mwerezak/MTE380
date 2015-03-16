@@ -24,7 +24,7 @@ void processTracking() {
         hdgIntegrator.feedData(gyro.x, gyro.update_time);
         pitchIntegrator.feedData(gyro.z, gyro.update_time);
         
-        #ifdef DBG_TRACKING
+        #ifdef DBG_GYRO_TRACKING
         Serial.print("Hdg: ");
         Serial.print(getCurrentHeading());
         Serial.print(", Pitch: ");

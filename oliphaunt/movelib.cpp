@@ -18,7 +18,7 @@ boolean TurnInPlaceToHeadingAction::checkFinished() {
 }
 
 void TurnInPlaceToHeadingAction::doWork() {
-    char servoCommand = targetBearing*Gain;
+    char servoCommand = targetBearing/GainDiv;
     if(servoCommand < 10) servoCommand = 10;
     if(servoCommand > -10) servoCommand = -10;
     

@@ -18,7 +18,7 @@
 #define GYRO_SIGN_Y 1
 #define GYRO_SIGN_Z 1
 
-typedef L3G::vector<int16_t> raw_gyro_data; //gyro raw data type
+typedef L3G::vector<int16_t> gyro_raw_data; //gyro raw data type
 
 typedef struct GyroReadingsStruct {
     unsigned long update_time;
@@ -34,7 +34,7 @@ void calibrateGyro();
 boolean updateGyro();
 
 // Gets the raw values from the gyro
-raw_gyro_data getGyroRaw();
+gyro_raw_data getGyroRaw();
 
 gyro_data getGyroReading();
 

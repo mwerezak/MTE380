@@ -1,17 +1,16 @@
 #include "gyro_driver.h"
 #include <Arduino.h>
 
-static unsigned long lastUpdateTime;
-static int16_t GYRO_OFFSET[3]; //raw offsets
 static L3G gyro;
+static gyro_raw_data GYRO_OFFSET; //raw offsets
+static unsigned long lastUpdateTime;
 
 void _printDebug();
 
 void initGyro() {
-    if(!gyro.init())
-    {
-        Serial.println("Failed to autodetect gyro type!");
-        while (1);
+    if(!gyro.init()) {
+        Serial.println("Failed to detect gyro!");
+        while (1); //trap
     }
     
     gyro.enableDefault();
@@ -25,23 +24,26 @@ void initGyro() {
 }
 
 //Updates gyro offset
+#define NUM_SAMPLES 128
 void calibrateGyro() {
     //figure out the zero position
     long totalx = 0, totaly = 0, totalz = 0;
-    for(int i=0; i < 32; i++) {
+    for(int i=0; i < NUM_SAMPLES; i++) {
         gyro.read();
-        raw_gyro_data data = getGyroRaw();
+        gyro_raw_data data = getGyroRaw();
         totalx += data.x;
         totaly += data.y;
         totalz += data.z;
+        
+        delay(GYRO_READ_DELAY);
     }
-    GYRO_OFFSET[0] = totalx/32;
-    GYRO_OFFSET[1] = totaly/32;
-    GYRO_OFFSET[2] = totalz/32;
+    GYRO_OFFSET.x = totalx/NUM_SAMPLES;
+    GYRO_OFFSET.y = totaly/NUM_SAMPLES;
+    GYRO_OFFSET.z = totalz/NUM_SAMPLES;
     
     #ifdef DBG_GYRO
     char sbuf[80];
-    snprintf(sbuf, 80, "Gyro Offsets: {x: %+6d, y: %+6d, z: %+6d}", GYRO_OFFSET[0], GYRO_OFFSET[1], GYRO_OFFSET[2]);
+    snprintf(sbuf, 80, "Gyro Offsets: {x: %+6d, y: %+6d, z: %+6d}", GYRO_OFFSET.x, GYRO_OFFSET.y, GYRO_OFFSET.z);
     Serial.println(sbuf);
     delay(1500);
     #endif
@@ -58,8 +60,8 @@ boolean updateGyro() {
     return false;
 }
 
-raw_gyro_data getGyroRaw() {
-    raw_gyro_data result = gyro.g;
+gyro_raw_data getGyroRaw() {
+    gyro_raw_data result = gyro.g;
     result.x *= GYRO_SIGN_X;
     result.y *= GYRO_SIGN_Y;
     result.z *= GYRO_SIGN_Z;
@@ -67,13 +69,13 @@ raw_gyro_data getGyroRaw() {
 }
 
 gyro_data getGyroReading() {
-    raw_gyro_data data = getGyroRaw();
+    gyro_raw_data data = getGyroRaw();
     
     gyro_data result;
     result.update_time = lastUpdateTime;
-    result.x = float(data.x - GYRO_OFFSET[0])*GYRO_GAIN_X;
-    result.y = float(data.y - GYRO_OFFSET[1])*GYRO_GAIN_Y;
-    result.z = float(data.z - GYRO_OFFSET[2])*GYRO_GAIN_Z;
+    result.x = float(data.x - GYRO_OFFSET.x)*GYRO_GAIN_X;
+    result.y = float(data.y - GYRO_OFFSET.y)*GYRO_GAIN_Y;
+    result.z = float(data.z - GYRO_OFFSET.z)*GYRO_GAIN_Z;
     return result;
 }
 
