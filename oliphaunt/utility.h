@@ -1,7 +1,11 @@
+#include <math.h>
 
 #define SQR(x) x*x
 #define CUBE(x) x*x*x
-#define LINSCALE(X, IN_MIN, IN_MAX, OUT_MIN, OUT_MAX) (X - IN_MIN)*(OUT_MAX - OUT_MIN)/(IN_MAX - IN_MIN) + OUT_MIN;
+#define LINSCALE(x, IN_MIN, IN_MAX, OUT_MIN, OUT_MAX) (x - IN_MIN)*(OUT_MAX - OUT_MIN)/(IN_MAX - IN_MIN) + OUT_MIN;
+
+#define TORAD(x) x*M_PI/180
+#define TODEG(x) x*180*M_1_PI
 
 template <typename T>
 static void printArray(T *array, int len, char *name) {
