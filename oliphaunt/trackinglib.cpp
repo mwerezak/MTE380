@@ -4,12 +4,17 @@
 #include "trackinglib.h"
 
 #include <Arduino.h>
+#include <math.h>
 #include "numericlib.h"
 #include "gyro_driver.h"
 #include "accmag_driver.h"
+#include "utility.h"
 
 AdamsBashforthIntegrator hdgIntegrator;
 EulerIntegrator pitchIntegrator;
+
+EulerIntegrator posXIntegrator;
+EulerIntegrator posYIntegrator;
 
 void initTracking() {
     //initialize sensors
@@ -20,6 +25,8 @@ void initTracking() {
     setCurrentHeading(0.0);
     setCurrentPitch(0.0);
     
+    vector2 init_pos { .x = 0.0, .y = 0.0 };
+    setCurrentPosition(init_pos);
 }
 
 void processTracking() {
@@ -57,14 +64,11 @@ float getCurrentPitch() {
 }
 
 
-/** Accelerometer **/
+/** Dead-Reckoning **/
 
 void setCurrentPosition(vector2 newPos) {
     posXIntegrator.reset(newPos.x);
     posYIntegrator.reset(newPos.y);
-    
-    velXIntegrator.reset(0);
-    velYIntegrator.reset(0);
 }
 
 vector2 getCurrentPosition() {
@@ -75,19 +79,25 @@ vector2 getCurrentPosition() {
     return pos;
 }
 
-vector2 getCurrentVelocity() {
-    unsigned long cur_time = millis();
+void updateCurrentSpeed(float newspeed) {
     vector2 vel;
-    vel.x = velXIntegrator.evalResult(cur_time);
-    vel.y = velYIntegrator.evalResult(cur_time);
-    return vel;
+    
+    //convert speed into X,Y components
+    double theta = TORAD(getCurrentHeading());
+    vel.x = newspeed*cos(theta);
+    vel.y = newspeed*sin(theta);
+    
+    updateCurrentVelocity(vel);
 }
 
+void updateCurrentVelocity(vector2 new_vel) {
+    unsigned long time = millis();
+    posXIntegrator.feedData(new_vel.x, time);
+    posYIntegrator.feedData(new_vel.y, time);
+}
+
+
 /** Compass **/
-
-
-
-
 
 
 

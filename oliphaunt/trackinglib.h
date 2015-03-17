@@ -45,10 +45,17 @@ void setCurrentPitch(float newPitch);
 float getCurrentHeading();
 float getCurrentPitch();
 
-//Also sets the current velocity to zero
+// Distances measured in cm
 void setCurrentPosition(vector2 newPos);
 vector2 getCurrentPosition();
 vector2 getCurrentVelocity();
+
+//** Dead Reckoning
+
+// Notifies the dead reckoning system of a speed change
+// Speed should be given in cm/s
+void updateCurrentSpeed(float newspeed);
+void updateCurrentVelocity(vector2 new_vel);
 
 void initTracking();
 void processTracking();
