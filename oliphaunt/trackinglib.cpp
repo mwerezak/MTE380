@@ -7,6 +7,7 @@
 #include "numericlib.h"
 #include "gyro_driver.h"
 #include "accmag_driver.h"
+#include "utility.h"
 
 AdamsBashforthIntegrator hdgIntegrator;
 EulerIntegrator pitchIntegrator;
@@ -60,26 +61,15 @@ float getCurrentPitch() {
 /** Accelerometer **/
 
 void setCurrentPosition(vector2 newPos) {
-    posXIntegrator.reset(newPos.x);
-    posYIntegrator.reset(newPos.y);
-    
-    velXIntegrator.reset(0);
-    velYIntegrator.reset(0);
 }
 
 vector2 getCurrentPosition() {
-    unsigned long cur_time = millis();
     vector2 pos;
-    pos.x = posXIntegrator.evalResult(cur_time);
-    pos.y = posYIntegrator.evalResult(cur_time);
     return pos;
 }
 
 vector2 getCurrentVelocity() {
-    unsigned long cur_time = millis();
     vector2 vel;
-    vel.x = velXIntegrator.evalResult(cur_time);
-    vel.y = velYIntegrator.evalResult(cur_time);
     return vel;
 }
 
@@ -93,17 +83,7 @@ vector2 getCurrentVelocity() {
 
 /** Helper Functions **/
 
-float normalizeAngle(float angle, float max_angle) {
-    float min_angle = max_angle - 360;
-    while (angle <= min_angle) { angle += 360; }
-    while (angle >  max_angle) { angle -= 360; }
-    return angle;
-}
 
-//converts a heading into a bearing
-float headingToBearing(float heading) {
-    float bearing = normalizeAngle(heading - getCurrentHeading(), 180);
-}
 
 //updateHeading();
 

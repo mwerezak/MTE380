@@ -4,7 +4,7 @@
             Y
             ^
             |
-    270 deg O--> X / 90 deg
+    270 deg O - > X / 90 deg
     
     The +y axis points towards the side of the wall where the lego man is initially located.
     The +x axis points along the wall, and the origin is centered on it's left edge.
@@ -15,7 +15,7 @@
             Y
             ^
             |
-    -90 deg O--> X / +90 deg
+    -90 deg O - > X / +90 deg
     
     The +y axis points towards the front of the vehicle.
     The +x axis points towards the right side.
@@ -35,9 +35,6 @@ typedef struct Vector2Struct {
     float x;
     float y;
 } vector2;
-
-float normalizeAngle(float angle, float max_angle);
-float headingToBearing(float heading);
 
 
 void setCurrentHeading(float newHdg);
