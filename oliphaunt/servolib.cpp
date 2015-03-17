@@ -25,10 +25,10 @@ void driveServoRightCmd(char command) {
 void driveServoLeft(float setting) {
     char cmd = SERVO_DRIVE_LEFT_PWM_STOP;
     if(setting > 0) {
-        cmd = char(LINSCALE(setting, 0.0, +1.0, SERVO_DRIVE_LEFT_PWM_STOP, SERVO_DRIVE_LEFT_PWM_MAX));
+        cmd = (char) LINSCALE(setting, 0.0, +1.0, SERVO_DRIVE_LEFT_PWM_STOP, SERVO_DRIVE_LEFT_PWM_MAX);
     }
     else if (setting < 0) {
-        cmd = char(LINSCALE(setting, -1.0, 0.0, SERVO_DRIVE_LEFT_PWM_MIN, SERVO_DRIVE_LEFT_PWM_STOP));
+        cmd = (char) LINSCALE(setting, -1.0, 0.0, SERVO_DRIVE_LEFT_PWM_MIN, SERVO_DRIVE_LEFT_PWM_STOP);
     }
     driveServoLeftCmd(cmd);
 }
@@ -36,10 +36,10 @@ void driveServoLeft(float setting) {
 void driveServoRight(float setting) {
     char cmd = SERVO_DRIVE_RIGHT_PWM_STOP;
     if(setting > 0) {
-        cmd = char(LINSCALE(setting, 0.0, +1.0, SERVO_DRIVE_RIGHT_PWM_STOP, SERVO_DRIVE_RIGHT_PWM_MAX));
+        cmd = (char) LINSCALE(setting, 0.0, +1.0, SERVO_DRIVE_RIGHT_PWM_STOP, SERVO_DRIVE_RIGHT_PWM_MAX);
     }
     else if (setting < 0) {
-        cmd = char(LINSCALE(setting, -1.0, 0.0, SERVO_DRIVE_RIGHT_PWM_MIN, SERVO_DRIVE_RIGHT_PWM_STOP));
+        cmd = (char) LINSCALE(setting, -1.0, 0.0, SERVO_DRIVE_RIGHT_PWM_MIN, SERVO_DRIVE_RIGHT_PWM_STOP);
     }
     driveServoRightCmd(cmd);    
 }
