@@ -22,9 +22,6 @@
     Orientation in the vehicle coord system are referred to as bearings.
 */
 
-//#define DBG_GYRO_TRACKING
-//#define DBG_INS_TRACKING
-
 #ifndef _TRACKINGLIB_H
 #define _TRACKINGLIB_H
 

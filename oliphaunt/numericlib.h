@@ -10,7 +10,13 @@ public:
     
     // Evaluates the integrator at eval_time.
     // If feedData() has not yet been called, this must return the initial value.
-    virtual float getResult(unsigned long eval_time) = 0;
+    virtual float evalResult(unsigned long eval_time) = 0;
+    
+    // Returns the result calculated from the last time the integrator was fed data.
+    // This can be used to reduce the number of calculations.
+    // Instead of taking the time at which to evaluate as an argument, it writes the
+    // time corresponding to the returned value to the given pointer.
+    virtual float getLastResult(unsigned long *last_update_time) = 0;
 };
 
 class EulerIntegrator: public NumericIntegrator {
@@ -25,7 +31,38 @@ public:
     
     virtual void reset(float init_value);
     virtual void feedData(float update_diff, unsigned long update_time);
-    virtual float getResult(unsigned long eval_time);
+    virtual float evalResult(unsigned long eval_time);
+    virtual float getLastResult(unsigned long *last_update_time);
+};
+
+/*
+    Based on the Adams-Bashforth multistep predictor-corrector method
+    proposed for INS applications by Jose J. Rosales and Ismael Colomina http://www.isprs.org/proceedings/2005/semana_geomatica05/front/abstracts/dimarts8/N06.pdf
+    
+    Each step of the Adams-Bashforth integrator takes about 900 microseconds.
+    If we need to do 5 integrations each cycle (1 for the gyro, plus 2*2 for accelerometer,
+    then calculations will take 4.5 ms. Therefore our sensor update rate is limited to 200 Hz.
+*/
+#define ABI_BUF_SIZE 4
+class AdamsBashforthIntegrator: public NumericIntegrator {
+private:
+    int update_count;
+    double last_value; //unit
+    unsigned long update_time[ABI_BUF_SIZE]; //ms
+    float update_diff[ABI_BUF_SIZE]; //munit/s
+    double beta[ABI_BUF_SIZE];
+    
+    template<typename T> void pushArray(T array[], T new_val);
+    void calcBetas(unsigned long eval_time);
+    float adamsBashforthStep(unsigned long tstep);
+    float eulerStep(unsigned long tstep); //backup for when we don't have enough data
+public:
+    AdamsBashforthIntegrator();
+
+    virtual void reset(float init_value);
+    virtual void feedData(float update_diff, unsigned long update_time);
+    virtual float evalResult(unsigned long eval_time);
+    virtual float getLastResult(unsigned long *last_update_time);
 };
 
 #endif

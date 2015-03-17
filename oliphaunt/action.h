@@ -19,14 +19,27 @@ typedef struct ActionArgsStruct {
 #define ARGS(ARG_STRUCT, IDX, ARG_FIELD) ARG_STRUCT.list[IDX].ARG_FIELD
 #define ARGSP(ARG_STRUCT_PTR, IDX, ARG_FIELD) ARG_STRUCT_PTR->list[IDX].ARG_FIELD
 
+typedef enum {
+    STOPPED,
+    SUSPENDED,
+    RUNNING,
+} ProcessStatus;
+
 /*
     Encapsulates an action that the robot needs to perform into a group of callbacks.
     Each of the public methods will be called by the ActionManager at the appropriate time.
 */
 class Action {
+    protected:
+        ProcessStatus proc_status;
+
     public:
         // For debugging
         virtual char* getName() { return "Action"; }
+        
+        Action() { proc_status = STOPPED; }
+        
+        ProcessStatus getProcessStatus() { return proc_status; }
         
         // Called once, when the task is first made active.
         virtual void setup(ActionArgs *args) {}
@@ -39,6 +52,12 @@ class Action {
         
         // Called once, after the task has been determined to be finished.
         virtual void cleanup() {}
+        
+        // These should only be called by the the action scheduler, really
+        void start(ActionArgs *args);
+        void stop();
+        void suspend();
+        void restart();
 };
 
 /*
