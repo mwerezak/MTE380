@@ -28,22 +28,28 @@ void driveServoRightCmd(byte command) {
 
 void driveServoLeft(float setting) {
     byte cmd = SERVO_DRIVE_LEFT_PWM_STOP;
+    float fcmd;
     if(setting > 0) {
-        cmd = (byte) round(LINSCALE(setting, 0.0, +1.0, SERVO_DRIVE_LEFT_PWM_STOP, SERVO_DRIVE_LEFT_PWM_MAX));
+        fcmd = LINSCALE(setting, 0.0, +1.0, SERVO_DRIVE_LEFT_PWM_STOP, SERVO_DRIVE_LEFT_PWM_MAX);
+        cmd = round(fcmd);
     }
     else if (setting < 0) {
-        cmd = (byte) round(LINSCALE(setting, -1.0, 0.0, SERVO_DRIVE_LEFT_PWM_MIN, SERVO_DRIVE_LEFT_PWM_STOP));
+        fcmd = LINSCALE(setting, -1.0, 0.0, SERVO_DRIVE_LEFT_PWM_MIN, SERVO_DRIVE_LEFT_PWM_STOP);
+        cmd = round(fcmd);
     }
     driveServoLeftCmd(cmd);
 }
 
 void driveServoRight(float setting) {
     byte cmd = SERVO_DRIVE_RIGHT_PWM_STOP;
+    float fcmd;
     if(setting > 0) {
-        cmd = (byte) round(LINSCALE(setting, 0.0, +1.0, SERVO_DRIVE_RIGHT_PWM_STOP, SERVO_DRIVE_RIGHT_PWM_MAX));
+        fcmd = LINSCALE(setting, 0.0, +1.0, SERVO_DRIVE_RIGHT_PWM_STOP, SERVO_DRIVE_RIGHT_PWM_MAX);
+        cmd = round(fcmd);
     }
     else if (setting < 0) {
-        cmd = (byte) round(LINSCALE(setting, -1.0, 0.0, SERVO_DRIVE_RIGHT_PWM_MIN, SERVO_DRIVE_RIGHT_PWM_STOP));
+        fcmd = LINSCALE(setting, -1.0, 0.0, SERVO_DRIVE_RIGHT_PWM_MIN, SERVO_DRIVE_RIGHT_PWM_STOP);
+        cmd = round(fcmd);
     }
     driveServoRightCmd(cmd);    
 }
@@ -52,7 +58,8 @@ void driveServoRight(float setting) {
 static float panning_setpoint;
 
 void setPanningServo(float angle) {
-    byte cmd = (byte) round(LINSCALE(angle, -90, +90, SERVO_PANNING_PWM_MIN, SERVO_PANNING_PWM_MAX));
+    float fcmd = LINSCALE(angle, -90, +90, SERVO_PANNING_PWM_MIN, SERVO_PANNING_PWM_MAX);
+    byte cmd = (byte) round(fcmd);
     analogWrite(SERVO_PANNING_PWM_PIN, cmd);
     panning_setpoint = angle;
 }

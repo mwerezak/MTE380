@@ -38,10 +38,6 @@ public:
 /*
     Based on the Adams-Bashforth multistep predictor-corrector method
     proposed for INS applications by Jose J. Rosales and Ismael Colomina http://www.isprs.org/proceedings/2005/semana_geomatica05/front/abstracts/dimarts8/N06.pdf
-    
-    Each step of the Adams-Bashforth integrator takes about 900 microseconds.
-    If we need to do 5 integrations each cycle (1 for the gyro, plus 2*2 for accelerometer,
-    then calculations will take 4.5 ms. Therefore our sensor update rate is limited to 200 Hz.
 */
 #define ABI_BUF_SIZE 4
 class AdamsBashforthIntegrator: public NumericIntegrator {

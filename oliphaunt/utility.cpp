@@ -1,5 +1,7 @@
 #include "utility.h"
 
+#include <Arduino.h>
+
 template <typename T>
 void printArray(T *array, int len, char *name) {
     Serial.print(name);
@@ -17,11 +19,6 @@ float normalizeAngle(float angle, float max_angle) {
     while (angle <= min_angle) { angle += 360; }
     while (angle >  max_angle) { angle -= 360; }
     return angle;
-}
-
-//converts a heading into a bearing
-float headingToBearing(float heading) {
-    float bearing = normalizeAngle(heading - getCurrentHeading(), 180);
 }
 
 float getShortestArc(float angle1, float angle2) {

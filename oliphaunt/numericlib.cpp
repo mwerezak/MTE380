@@ -6,7 +6,7 @@
 #include <Arduino.h>
 #include "utility.h"
 
-#define MSEC_TO_SEC 1000 //number of ms in a second
+#define MSEC_PER_SEC 1000 //number of ms in a second
 
 /** Euler Integrator **/
 
@@ -21,7 +21,7 @@ void EulerIntegrator::reset(float init_value) {
 }
 
 double EulerIntegrator::eulerStep(unsigned long timestep) {
-    return last_value + timestep*last_diff/MSEC_TO_SEC;
+    return last_value + timestep*last_diff/MSEC_PER_SEC;
 }
 
 void EulerIntegrator::feedData(float differential, unsigned long update_time) {
@@ -43,9 +43,6 @@ unsigned long EulerIntegrator::getLastUpdateTime() {
 }
 
 /** Adams-Bashforth Integrator **/
-
-#define SQR(x) x*x
-#define CUBE(x) x*x*x
 
 AdamsBashforthIntegrator::AdamsBashforthIntegrator() {
     reset(0);
@@ -104,7 +101,7 @@ float AdamsBashforthIntegrator::evalResult(unsigned long eval_time) {
 }
 
 float AdamsBashforthIntegrator::eulerStep(unsigned long eval_timestep) {
-    return last_value + eval_timestep*update_diff[0]/MSEC_TO_SEC;
+    return last_value + eval_timestep*update_diff[0]/MSEC_PER_SEC;
 }
 
 float AdamsBashforthIntegrator::adamsBashforthStep(unsigned long eval_timestep) {
@@ -118,8 +115,8 @@ float AdamsBashforthIntegrator::adamsBashforthStep(unsigned long eval_timestep) 
             + beta[0]*update_diff[3]
         );
     
-    //we handle time in u/ms, so convert back to s before evaluating
-    return last_value + update/MSEC_TO_SEC;
+    //we handle time in ms, so convert back to s before evaluating
+    return last_value + update/MSEC_PER_SEC;
 }
 
 // Pushes a new value onto the front of an array,
