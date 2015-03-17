@@ -34,9 +34,12 @@ float EulerIntegrator::evalResult(unsigned long eval_time) {
     return eulerStep(eval_time - last_update_time);
 }
 
-float EulerIntegrator::getLastResult(unsigned long *last_update) {
-    *last_update = last_update_time;
+float EulerIntegrator::getLastResult() {
     return last_value;
+}
+
+unsigned long EulerIntegrator::getLastUpdateTime() {
+    return last_update_time;
 }
 
 /** Adams-Bashforth Integrator **/
@@ -87,9 +90,12 @@ void AdamsBashforthIntegrator::feedData(float _update_diff, unsigned long _updat
     #endif
 }
 
-float AdamsBashforthIntegrator::getLastResult(unsigned long *last_update_time) {
-    *last_update_time = update_time[0];
+float AdamsBashforthIntegrator::getLastResult() {
     return last_value;
+}
+
+unsigned long AdamsBashforthIntegrator::getLastUpdateTime() {
+    return update_time[0];
 }
 
 //Uses euler from the last update time to save on expensive calculation
