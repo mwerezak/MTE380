@@ -44,9 +44,6 @@ unsigned long EulerIntegrator::getLastUpdateTime() {
 
 /** Adams-Bashforth Integrator **/
 
-#define SQR(x) x*x
-#define CUBE(x) x*x*x
-
 AdamsBashforthIntegrator::AdamsBashforthIntegrator() {
     reset(0);
 }
