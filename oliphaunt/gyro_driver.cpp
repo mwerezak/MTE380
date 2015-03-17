@@ -3,7 +3,7 @@
 
 static L3G gyro;
 static gyro_raw_data GYRO_OFFSET; //raw offsets
-static unsigned long lastUpdateTime;
+static unsigned long lastUpdateTime, lastUpdateMicros;
 
 void _printDebug();
 
@@ -15,12 +15,13 @@ void initGyro() {
     
     gyro.enableDefault();
     gyro.writeReg(L3G::CTRL_REG4, 0x00); // 245 dps full scale
-    gyro.writeReg(L3G::CTRL_REG1, 0x4F); // normal power mode, all axes enabled, 200 Hz ODR, 12.5 Hz BW
+    gyro.writeReg(L3G::CTRL_REG1, 0x8F); // normal power mode, all axes enabled, 400 Hz ODR, 20 Hz BW
     
     delay(50);
     
     calibrateGyro();
     lastUpdateTime = millis();
+    lastUpdateMicros = micros();
 }
 
 //Updates gyro offset
@@ -50,8 +51,9 @@ void calibrateGyro() {
 }
 
 boolean updateGyro() {
-    if(millis() - lastUpdateTime >= GYRO_READ_DELAY) {
+    if(micros() - lastUpdateMicros >= GYRO_READ_DELAY) {
         gyro.read();
+        lastUpdateMicros = micros();
         lastUpdateTime = millis();
         
         _printDebug();
