@@ -14,9 +14,8 @@ public:
     
     // Returns the result calculated from the last time the integrator was fed data.
     // This can be used to reduce the number of calculations.
-    // Instead of taking the time at which to evaluate as an argument, it writes the
-    // time corresponding to the returned value to the given pointer.
-    virtual float getLastResult(unsigned long *last_update_time) = 0;
+    virtual float getLastResult() = 0;
+    virtual unsigned long getLastUpdateTime() = 0;
 };
 
 class EulerIntegrator: public NumericIntegrator {
@@ -32,7 +31,8 @@ public:
     virtual void reset(float init_value);
     virtual void feedData(float update_diff, unsigned long update_time);
     virtual float evalResult(unsigned long eval_time);
-    virtual float getLastResult(unsigned long *last_update_time);
+    virtual float getLastResult();
+    virtual unsigned long getLastUpdateTime();
 };
 
 /*
@@ -62,7 +62,8 @@ public:
     virtual void reset(float init_value);
     virtual void feedData(float update_diff, unsigned long update_time);
     virtual float evalResult(unsigned long eval_time);
-    virtual float getLastResult(unsigned long *last_update_time);
+    virtual float getLastResult();
+    virtual unsigned long getLastUpdateTime();
 };
 
 #endif

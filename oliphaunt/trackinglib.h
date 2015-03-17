@@ -28,6 +28,14 @@
 #define GYRO_HDG_AXIS x
 #define GYRO_PITCH_AXIS z
 
+#define ACC_Y_AXIS y
+#define ACC_X_AXIS z
+
+typedef struct Vector2Struct {
+    float x;
+    float y;
+} vector2;
+
 float normalizeAngle(float angle, float max_angle);
 float headingToBearing(float heading);
 
@@ -36,6 +44,11 @@ void setCurrentHeading(float newHdg);
 void setCurrentPitch(float newPitch);
 float getCurrentHeading();
 float getCurrentPitch();
+
+//Also sets the current velocity to zero
+void setCurrentPosition(vector2 newPos);
+vector2 getCurrentPosition();
+vector2 getCurrentVelocity();
 
 void initTracking();
 void processTracking();

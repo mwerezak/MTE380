@@ -1,11 +1,11 @@
-#define DBG_ACC
+//#define DBG_ACC
 
 #ifndef _ACCMAG_DRIVER_H
 #define _ACCMAG_DRIVER_H
 
 #include <LSM303.h>
 
-#define ACC_READ_DELAY 20 //50 Hz
+#define ACC_READ_DELAY 625 //microseconds, 1600 Hz
 
 // LSM303 accelerometer: 2G full scale
 // 0.061 mG/digit; 1G = 0.000061; 1 mm/s^2 = 0.59841

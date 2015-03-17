@@ -4,7 +4,7 @@
 
 static LSM303 accmag;
 static acc_raw_data ACC_OFFSET; //raw offsets
-static unsigned long acc_last_update;
+static unsigned long acc_last_update, acc_last_update_micros;
 //static unsigned long mag_last_update;
 
 void _printDebugAcc();
@@ -15,13 +15,15 @@ void initAccMag() {
         while (1); //trap
     }
     accmag.enableDefault();
-    accmag.writeReg(LSM303::CTRL2, 0x00); //2G full scale
-    accmag.writeReg(LSM303::CTRL1, 0x57); //50 Hz, BDU default, all axis enable
+    accmag.writeReg(LSM303::CTRL1, 0xA7); //1600 Hz, BDU default, all axis enable
+    accmag.writeReg(LSM303::CTRL2, 0xC0); //50 Hz AA filter, 2G full scale
+    //accmag.writeReg(LSM303::CTRL7, 0x02); //
     
     delay(50);
     
     calibrateAccm();
     acc_last_update = millis();
+    acc_last_update_micros = micros();
 }
 
 #define ACC_CALBR_NUM_SAMPLES 128
@@ -35,7 +37,7 @@ void calibrateAccm() {
         totaly += data.y;
         totalz += data.z;
         
-        delay(ACC_READ_DELAY);
+        delayMicroseconds(ACC_READ_DELAY);
     }
     ACC_OFFSET.x = totalx/ACC_CALBR_NUM_SAMPLES;
     ACC_OFFSET.y = totaly/ACC_CALBR_NUM_SAMPLES;
@@ -69,9 +71,10 @@ acc_data getAccReading() {
 }
 
 boolean updateAcc() {
-    if(millis() - acc_last_update >= ACC_READ_DELAY) {
+    if(micros() - acc_last_update_micros >= ACC_READ_DELAY) {
         accmag.readAcc();
         acc_last_update = millis();
+        acc_last_update_micros = micros();
         
         _printDebugAcc();
         return true;
@@ -79,7 +82,7 @@ boolean updateAcc() {
     return false;
 }
 
-void _printDebugAcc() {
+inline void _printDebugAcc() {
     #ifdef DBG_ACC
     acc_data data = getAccReading();
     
