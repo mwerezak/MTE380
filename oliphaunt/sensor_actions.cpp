@@ -6,40 +6,84 @@
 #include "action.h"
 #include "utility.h"
 
-void PanIRAndTakeReading::setup(ActionArgs *args) {
+/** PanIRServo **/
+
+void PanIRServo::setup(ActionArgs *args) {
     float target_angle = ARGSP(args, 0, floatval);
-    result_ptr = (float*) ARGSP(args, 1, ptrval);
     
-    reading_count = -1;
-    wait_until = millis() + estimatePanningTime(target_angle) + 5;
+    wait.set(estimatePanningTime(target_angle) + 5);
     setPanningServo(target_angle);
 }
 
-boolean PanIRAndTakeReading::checkFinished() {
-    if(reading_count == PanIRAndTakeReading::NumReadings) return true;
-    
-    return false;
+boolean PanIRServo::checkFinished() {
+    return wait.expired();
 }
 
-void PanIRAndTakeReading::doWork() {
-    if(millis() < wait_until) return; //waiting
+
+/** IRDistanceReading **/
+
+void IRDistanceReading::setup(ActionArgs *args) {
+    return_ptr = (float*) ARGSP(args, 0, ptrval);
     
-    if(reading_count < 0) {
-        reading_count = 0; //begin reading
-        return;
-    }
-    
-    if(reading_count < PanIRAndTakeReading::NumReadings) {
-        readings[reading_count++] = (float) getDistanceIRReading();
-        wait_until = millis() + 20; //wait 20 ms
-        return;
-    }
+    reading_count = 0;
+    ir_refresh.set(DISTIR_REFRESH_TIME);
 }
 
-void PanIRAndTakeReading::cleanup() {
+boolean IRDistanceReading::checkFinished() {
+    return (reading_count >= NumReadings);
+}
+
+void IRDistanceReading::doWork() {
+    if(!ir_refresh.expired()) return;
+    
+    //take a reading
+    readings[reading_count++] = (float) getDistanceIRReading();
+    ir_refresh.reset();
+}
+
+void IRDistanceReading::cleanup() {
+    //calculate the average and write it to return_ptr
     float total = 0;
-    for(int i = 0; i < PanIRAndTakeReading::NumReadings; i++) {
+    for(int i = 0; i < NumReadings; i++) {
         total += readings[i];
     }
-    *result_ptr = total/PanIRAndTakeReading::NumReadings;
+    *return_ptr = total/NumReadings;
+}
+
+/** UltraSoundReading **/
+
+void UltraSoundReading::setup(ActionArgs *args) {
+    return_ptr = (float*) ARGSP(args, 0, ptrval);
+    
+    reading_count = 0;
+    usound_refresh.set(USOUND_CYCLE_TIME+5);
+}
+
+boolean UltraSoundReading::checkFinished() {
+    return (reading_count >= NumReadings);
+}
+
+void UltraSoundReading::doWork() {
+    if(!usound_refresh.expired()) return;
+    
+    //take a reading
+    usound_refresh.reset();
+    readings[reading_count++] = (float) readUltraSound();
+}
+
+void UltraSoundReading::cleanup() {
+    //calculate the average and write it to return_ptr
+    boolean has_reading = false;
+    float total = 0;
+    for(int i = 0; i < NumReadings; i++) {
+        if(readings[i] > 0) {
+            total += readings[i];
+            has_reading = true;
+        }
+    }
+    if(has_reading) {
+        *return_ptr = total/NumReadings;
+    } else {
+        *return_ptr = -1.0;
+    }
 }
