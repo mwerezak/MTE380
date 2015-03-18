@@ -16,6 +16,8 @@ void initSensors() {
     //distance IR
     pinMode(DISTIR_CTL_PIN, OUTPUT);
     
+    //ultrasound
+    pinMode(USOUND_DATCTL_PIN, INPUT); //might as well keep the usound pin in the high-impedance state
 }
 
 //note that the distance IR sensor requires 20 ms to stabilize after being enabled
@@ -27,44 +29,34 @@ void disableDistanceIR() {
     digitalWrite(DISTIR_CTL_PIN, LOW);
 }
 
+// Returns a distance in cm
 double getDistanceIRReading() {
-    long val = analogRead(DISTIR_DATA_PIN);
-    return exp((1.0/(val * 5.0/1024.0)+1.723)/0.909);
+    long vsense = analogRead(DISTIR_DATA_PIN);
+    return exp((1.0/(vsense * 5.0/1024.0)+1.723)/0.909);
 }
 
 
-/*
- * Synopsis     : long readSound(int _PIN)   *
- * Arguments    : int  _PIN : Digital pin number of Sonar sensor
- *
- * Description  : returns distance value from Sonar sensor in cm
- * 
- * Returns      : long: distance in cm
- */
-long readSound(int _PIN){
+// Returns a distance in cm
+double readSound() {
+    unsigned long pulse_width;
     
-    pinMode(_PIN, OUTPUT);
-    digitalWrite(_PIN, LOW);
+    //command pulse
+    pinMode(USOUND_DATCTL_PIN, OUTPUT);
+    digitalWrite(USOUND_DATCTL_PIN, LOW);
     delayMicroseconds(2);
-    digitalWrite(_PIN, HIGH);
-    delayMicroseconds(5);
-    digitalWrite(_PIN, LOW);
-    pinMode(_PIN, INPUT);
-    return (pulseIn(_PIN, HIGH)/29/2);
+    digitalWrite(USOUND_DATCTL_PIN, HIGH);
+    delayMicroseconds(USOUND_CTL_PULSE_WIDTH);
+    digitalWrite(USOUND_DATCTL_PIN, LOW);
     
-}//end readSound
+    //read output pulse
+    pinMode(USOUND_DATCTL_PIN, INPUT);
+    pulse_width = pulseIn(USOUND_DATCTL_PIN, HIGH, USOUND_TIMEOUT);
+    
+    if(!pulse_width) return -2.0; //timeout
+    if(pulse_width >= USOUND_THRESHOLD) return -1.0;
+    return pulse_width*USOUND_US_TO_CM;
+}
 
-/*
- * Synopsis     : bool readIRC(int _PIN) *
- * Arguments    : int  _PIN : Digital pin number of proximity IR sensor
- *
- * Description  : returns whether something is within 10 cm from the
-                  IR sensor
- * 
- * Returns      : bool:  1 no, 0 yes
- */
-bool readProxIR(int _PIN){
-    
-    return digitalRead(_PIN);
-    
-}//end readIRC
+bool getProxIRReading() {
+    return digitalRead(PROXIR_PIN);
+}
