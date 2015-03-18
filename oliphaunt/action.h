@@ -9,6 +9,7 @@ typedef union ActionArgsUnion {
     float floatval;
     unsigned int uintval;
     unsigned long ulongval;
+    void *ptrval;
 } ActionArg;
 
 #define MAX_ACTION_ARGS 8

@@ -1,4 +1,7 @@
+//#define DBG_ACTION_QUEUE
+
 #include "actionqueue.h"
+#include "utility.h"
 
 Action* currentAction;
 int _startIdx, _queueLen;
@@ -27,16 +30,11 @@ void processMain() {
     
     //check currentAction again in case it was killed.
     if(!currentAction) {
-        #ifdef DBG_ACTION_QUEUE
-        Serial.println("startNextAction");
-        #endif
-        
         _startNextAction();
     }
     
     #ifdef DBG_ACTION_QUEUE
-    Serial.print("queue length: ");
-    Serial.println(queueLength());
+    PRINTF("current: %s, queuelen: %d", currentAction? currentAction->getName() : "None", queueLength());
     #endif
 }
 
@@ -59,6 +57,9 @@ void _startNextAction() {
     if(nextAction) {
         currentAction = nextAction->action;
         _startAction(currentAction, &nextAction->args);
+        #ifdef DBG_ACTION_QUEUE
+        PRINTF("startNextAction: %s", currentAction? currentAction->getName(): "INVALID");
+        #endif
     }
 }
 

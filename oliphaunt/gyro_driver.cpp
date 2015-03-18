@@ -25,7 +25,7 @@ void initGyro() {
 }
 
 //Updates gyro offset
-#define GYRO_CALBR_NUM_SAMPLES 128
+#define GYRO_CALBR_NUM_SAMPLES 256
 void calibrateGyro() {
     //figure out the zero position
     long totalx = 0, totaly = 0, totalz = 0;

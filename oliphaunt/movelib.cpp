@@ -18,12 +18,22 @@ boolean TurnInPlaceToHeadingAction::checkFinished() {
 }
 
 void TurnInPlaceToHeadingAction::doWork() {
-    char servoCommand = targetBearing/GainDiv;
-    if(servoCommand < 10) servoCommand = 10;
-    if(servoCommand > -10) servoCommand = -10;
+    DriveCmd fwd = FULL_FWD;
+    DriveCmd rev = FULL_REV;
+    if(fabs(targetBearing) <= 15) {
+        fwd = HALF_FWD;
+        rev = HALF_REV;
+    }
     
-    driveServoLeft(servoCommand);
-    driveServoRight(-servoCommand);
+    if(targetBearing > 0) {
+        driveServoLeft(fwd);
+        driveServoRight(rev);
+    }
+    else {
+        driveServoLeft(rev);
+        driveServoRight(fwd);
+    }
+    
 }
 
 void TurnInPlaceToHeadingAction::cleanup() {
