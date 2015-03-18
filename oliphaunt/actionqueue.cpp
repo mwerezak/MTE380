@@ -3,9 +3,11 @@
 #include "actionqueue.h"
 #include "utility.h"
 
-Action* currentAction;
-int _startIdx, _queueLen;
-ActionQueueItem _actionQueue[ACTION_QUEUE_SIZE];
+Action *currentAction;
+
+static int _startIdx, _queueLen;
+static ActionQueueItem _actionQueue[ACTION_QUEUE_SIZE];
+static unsigned long _last_process_time;
 
 ActionQueueItem* _removeNext();
 ActionQueueItem* _removeLast();
@@ -17,15 +19,18 @@ void _startNextAction();
 void initQueue() {    
     _startIdx = 0;
     _queueLen = 0;
+    _last_process_time = millis();
 }
 
 void processMain() {
-    if(currentAction) {
+    unsigned long time = millis();
+    if(currentAction && time >= _last_process_time + ACTION_PROCESS_DELAY) {
         if(currentAction->checkFinished()) {
             killCurrentAction();
         } else {
             currentAction->doWork();
         }
+        _last_process_time = time;
     }
     
     //check currentAction again in case it was killed.

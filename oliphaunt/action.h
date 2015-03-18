@@ -42,6 +42,12 @@ class Action {
         
         ProcessStatus getProcessStatus() { return proc_status; }
         
+        // These should only be called by the the action scheduler, really
+        void start(ActionArgs *args);
+        void stop();
+        void suspend();
+        void restart();
+        
         // Called once, when the task is first made active.
         virtual void setup(ActionArgs *args) {}
         
@@ -54,11 +60,6 @@ class Action {
         // Called once, after the task has been determined to be finished.
         virtual void cleanup() {}
         
-        // These should only be called by the the action scheduler, really
-        void start(ActionArgs *args);
-        void stop();
-        void suspend();
-        void restart();
 };
 
 /*
