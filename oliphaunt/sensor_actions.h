@@ -21,16 +21,38 @@ public:
     Parameters:
     1 - ptrval (float*): A pointer to a float to write the reading.
 */
-#define NUM_READINGS 5
 class IRDistanceReading : public SingletonAction<IRDistanceReading> {
 private:
+    static const int NumReadings = 5;
+    
     int reading_count;
-    float readings[NUM_READINGS];
+    float readings[NumReadings];
     DelayTimer ir_refresh;
     
     float *return_ptr;
 public:
     virtual char* getName() { return "IRDistanceReading"; }
+    virtual void setup(ActionArgs *args);
+    virtual boolean checkFinished();
+    virtual void doWork();
+    virtual void cleanup();
+};
+
+/*
+    Parameters:
+    1 - ptrval (float*): A pointer to a float to write the reading.
+*/
+class UltraSoundReading : public SingletonAction<UltraSoundReading> {
+private:
+    static const int NumReadings = 5;
+
+    int reading_count;
+    float readings[NumReadings];
+    DelayTimer usound_refresh;
+    
+    float *return_ptr;
+public:
+    virtual char* getName() { return "UltraSoundReading"; }
     virtual void setup(ActionArgs *args);
     virtual boolean checkFinished();
     virtual void doWork();
