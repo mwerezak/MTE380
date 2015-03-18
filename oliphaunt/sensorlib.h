@@ -11,8 +11,12 @@
 
 #include "arduino.h"
 
-long readSound(int);
-bool readProxIR(int);
-bool startDistanceIR(int);
-float readDistanceIR(int,int);
-bool stopDistanceIR(int);
+#define SENSOR_SOUND_PIN		-1
+#define SENSOR_IR_LR_PIN		-1
+#define SENSOR_IR_SR_PIN		-1
+
+long readSound();
+bool readProxIR();
+bool startDistanceIR();
+float readDistanceIR();
+bool stopDistanceIR();

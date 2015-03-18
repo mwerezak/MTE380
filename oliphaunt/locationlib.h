@@ -1,4 +1,13 @@
-struct posn_vect {
+#define BUFFER_LEN      135
+
+struct PanBuffer
+{
+    float dist[BUFFER_LEN];
+    float angle[BUFFER_LEN];
+    int index; //last filled position
+};
+
+struct PosnVect {
     //The units are cm
     float x;
     float y;
@@ -31,4 +40,4 @@ bool addPoint2Regression(float, float, int, RegressionData *);
  *                    robot's direction
  *    num_readings
  */
-posn_vect triangulation(float ir_ranges[], float pan_angles[], int num_readings);
+posnVect triangulation(float ir_ranges[], float pan_angles[], int num_readings);

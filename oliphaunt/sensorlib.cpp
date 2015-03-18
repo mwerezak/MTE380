@@ -14,22 +14,22 @@
  * Name         : readSound
  *
  * Synopsis     : long readSound(int _PIN)   *
- * Arguments    : int  _PIN : Digital pin number of Sonar sensor
+ * Arguments    : None
  *
  * Description  : returns distance value from Sonar sensor in cm
  * 
  * Returns      : long: distance in cm
  */
-long readSound(int _PIN){
-    
-    pinMode(_PIN, OUTPUT);
-    digitalWrite(_PIN, LOW);
+long readSound(){
+
+    pinMode(SENSOR_SOUND_PIN, OUTPUT);
+    digitalWrite(SENSOR_SOUND_PIN, LOW);
     delayMicroseconds(2);
-    digitalWrite(_PIN, HIGH);
+    digitalWrite(SENSOR_SOUND_PIN, HIGH);
     delayMicroseconds(5);
-    digitalWrite(_PIN, LOW);
-    pinMode(_PIN, INPUT);
-    return (pulseIn(_PIN, HIGH)/29/2);
+    digitalWrite(SENSOR_SOUND_PIN, LOW);
+    pinMode(SENSOR_SOUND_PIN, INPUT);
+    return (pulseIn(SENSOR_SOUND_PIN, HIGH)/29/2);
     
 }//end readSound
 
@@ -37,16 +37,16 @@ long readSound(int _PIN){
  * Name         : readIRC
  *
  * Synopsis     : bool readIRC(int _PIN) *
- * Arguments    : int  _PIN : Digital pin number of proximity IR sensor
+ * Arguments    : None
  *
  * Description  : returns whether something is within 10 cm from the
                   IR sensor
  * 
  * Returns      : bool:  1 no, 0 yes
  */
-bool readProxIR(int _PIN){
+bool readProxIR(){
     
-    return digitalRead(_PIN);
+    return digitalRead(SENSOR_IR_SR_PIN);
     
 }//end readIRC
 
@@ -54,16 +54,16 @@ bool readProxIR(int _PIN){
  * Name         : startIRF
  *
  * Synopsis     : bool startIRF(int _PIN_ONE) *
- * Arguments    : int  _PIN_ONE : Digital input pin of long distance IR sensor
+ * Arguments    : None
  *
  * Description  : enables the IR sensor to start reading
  * 
  * Returns      : bool: 1-started, 0 failed to start
  */
-bool startDistanceIR(int _PIN_ONE){
-    
-    pinMode(_PIN_ONE,OUTPUT);
-    digitalWrite(_PIN_ONE,HIGH);
+bool startDistanceIR(){
+
+    pinMode(SENSOR_IR_LR_PIN,OUTPUT);
+    digitalWrite(SENSOR_IR_LR_PIN,HIGH);
     return false;
 
 }//end startIRF
@@ -72,18 +72,17 @@ bool startDistanceIR(int _PIN_ONE){
  * Name         : readIRF
  *
  * Synopsis     : float readIRF(int _PIN_ONE, int _PIN_TWO) *
- * Arguments    : int  _PIN_ONE : Analogue output pin of long
-                                  distance IR sensor
+ * Arguments    : None
  *
  * Description  : returns distance from IR sensor in cm, Range 10-150 cm
  * 
  * Returns      : float: distnce in cm
  */
-float readDistanceIR(int _PIN_ONE){
+float readDistanceIR(){
     
     int val;
     delayMicroseconds(22);
-    val = analogRead(_PIN_ONE);
+    val = analogRead(SENSOR_IR_LR_PIN);
     delay(20);
     return (float)exp((1/(val * 5.0/1024.0)+1.723)/0.909);
 
@@ -93,16 +92,16 @@ float readDistanceIR(int _PIN_ONE){
  * Name         : stopIRF
  *
  * Synopsis     : bool stopIRF(int _PIN_ONE) *
- * Arguments    : int  _PIN_ONE : Digital input pin of long distance IR sensor
+ * Arguments    : None
  *
  * Description  : stops IR sensor from reading data 
  *                WHEN AND WHY DO WE WANT TO CALL THIS?
  * 
  * Returns      : bool: 1-Stopped, 0-failed
  */
-bool stopDistanceIR(int _PIN_ONE){
+bool stopDistanceIR(){
 
-    digitalWrite(_PIN_ONE,LOW);
+    digitalWrite(SENSOR_IR_LR_PIN,LOW);
     return true; 
 
 }//end stopIRF
