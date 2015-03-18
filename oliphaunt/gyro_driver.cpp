@@ -36,7 +36,7 @@ void calibrateGyro() {
         totaly += data.y;
         totalz += data.z;
         
-        delay(GYRO_READ_DELAY);
+        delayMicroseconds(GYRO_READ_DELAY);
     }
     GYRO_OFFSET.x = totalx/GYRO_CALBR_NUM_SAMPLES;
     GYRO_OFFSET.y = totaly/GYRO_CALBR_NUM_SAMPLES;
