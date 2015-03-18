@@ -1,45 +1,62 @@
 #ifndef _SERVOLIB_H
 #define _SERVOLIB_H
 
-#define SERVO_DRIVE_FULL_FORWARD        70
-#define SERVO_DRIVE_FULL_REVERSE        -170
+#define SERVO_DRIVE_DEADTIME        200 //ms
 
 // M1 - LEFT
-#define SERVO_DRIVE_LEFT_PWM_PIN        11
-#define SERVO_DRIVE_LEFT_PWM_NEUTRAL    0
-#define SERVO_DRIVE_LEFT_PWM_STOP       180
-#define SERVO_DRIVE_LEFT_PWM_MAX        253
-#define SERVO_DRIVE_LEFT_PWM_MIN        1
+#define SERVO_DRIVE_LEFT_PIN        11
+#define SERVO_DRIVE_LEFT_NEUTRAL    0
+#define SERVO_DRIVE_LEFT_STOP       180
+
+#define SERVO_DRIVE_LEFT_FULL_FWD   253
+#define SERVO_DRIVE_LEFT_HALF_FWD   188
+
+#define SERVO_DRIVE_LEFT_FULL_REV   1
+#define SERVO_DRIVE_LEFT_HALF_REV   176
 
 // M2 - RIGHT
-#define SERVO_DRIVE_RIGHT_PWM_PIN       12
-#define SERVO_DRIVE_RIGHT_PWM_NEUTRAL   0
-#define SERVO_DRIVE_RIGHT_PWM_STOP      180
-#define SERVO_DRIVE_RIGHT_PWM_MAX       250
-#define SERVO_DRIVE_RIGHT_PWM_MIN       1
+#define SERVO_DRIVE_RIGHT_PIN       12
+#define SERVO_DRIVE_RIGHT_NEUTRAL   0
+#define SERVO_DRIVE_RIGHT_STOP      180
+
+#define SERVO_DRIVE_RIGHT_FULL_FWD  1
+#define SERVO_DRIVE_RIGHT_HALF_FWD  75
+
+#define SERVO_DRIVE_RIGHT_FULL_REV  250
+#define SERVO_DRIVE_RIGHT_HALF_REV  190     //188
 
 // Panning Servo
-#define SERVO_PANNING_PWM_PIN          10
-#define SERVO_PANNING_PWM_MAX          255
-#define SERVO_PANNING_PWM_MIN          0
-#define SERVO_PANNING_SPEED            2.833333 //ms/deg
+#define SERVO_PANNING_PIN          10
+#define SERVO_PANNING_MAX          255
+#define SERVO_PANNING_MIN          0
+#define SERVO_PANNING_EST_SPEED    2.833333 //ms/deg
 
+//values mainly for debugging purposes
+typedef enum { 
+    FULL_FWD=2, 
+    HALF_FWD=1, 
+    HOLD_STOP=99, 
+    HALF_REV=-1, 
+    FULL_REV=-2, 
+    NEUTRAL=0 
+} DriveCmd;
+
+void initDriveServos();
+void processDriveServos();
 
 void driveServosStop();
 void driveServosNeutral();
 
-//takes a raw command, from MIN - MAX
-void driveServoLeftCmd(char command);
-void driveServoRightCmd(char command);
-
-//takes a setting from +1.0 to -1.0
-void driveServoLeft(float setting);
-void driveServoRight(float setting);
+void driveServoLeft(DriveCmd setting);
+void driveServoRight(DriveCmd setting);
 
 //Panning angles are specified as -90 to +90 deg
 void setPanningServo(float target_angle);
 float getPanningServoSetpoint();
-unsigned long estimatePanningTime(float target_angle); //returns a duration in ms, arc specified in deg
+
+//returns a duration in ms, 
+//will NOT return a valid value if called immediately after setPanningServo()
+unsigned long estimatePanningTime(float target_angle); 
 
 
 

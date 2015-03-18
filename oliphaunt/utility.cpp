@@ -2,6 +2,10 @@
 
 #include <Arduino.h>
 
+#ifdef DBG_PRINT
+char __printbuf[PRINT_BUF_SIZE];
+#endif
+
 template <typename T>
 void printArray(T *array, int len, char *name) {
     Serial.print(name);

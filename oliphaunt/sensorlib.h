@@ -1,18 +1,20 @@
-/*Sensor library
- *
- *By: Group 9
- *2015
- *This code the property of group 9 and cannot be used unless with
- *the explicit permission of all of the group 9 members
- *
- *This library stores all the functions involved in retrieving data 
- *from the sensors directly.
- **/
+#ifndef _SENSORLIB_H
+#define _SENSORLIB_H
 
-#include "arduino.h"
+#define USOUND_DATA_PIN 22
+#define PROXIR_PIN 24
+#define DISTIR_CTL_PIN 26
+#define DISTIR_DATA_PIN 0
+
+void initSensors();
+
+//note that the distance IR sensor requires 20 ms to stabilize after being enabled
+void enableDistanceIR();
+void disableDistanceIR();
+double getDistanceIRReading();
 
 long readSound(int);
 bool readProxIR(int);
-bool startDistanceIR(int);
-float readDistanceIR(int,int);
-bool stopDistanceIR(int);
+
+
+#endif
