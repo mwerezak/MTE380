@@ -10,6 +10,29 @@
  **/
 #include "sensorlib.h"
 
+#include <Arduino.h>
+
+void initSensors() {
+    //distance IR
+    pinMode(DISTIR_CTL_PIN, OUTPUT);
+    
+}
+
+//note that the distance IR sensor requires 20 ms to stabilize after being enabled
+void enableDistanceIR() {
+    digitalWrite(DISTIR_CTL_PIN, HIGH);
+}
+
+void disableDistanceIR() {
+    digitalWrite(DISTIR_CTL_PIN, LOW);
+}
+
+double getDistanceIRReading() {
+    long val = analogRead(DISTIR_DATA_PIN);
+    return exp((1.0/(val * 5.0/1024.0)+1.723)/0.909);
+}
+
+
 /*
  * Synopsis     : long readSound(int _PIN)   *
  * Arguments    : int  _PIN : Digital pin number of Sonar sensor
@@ -45,54 +68,3 @@ bool readProxIR(int _PIN){
     return digitalRead(_PIN);
     
 }//end readIRC
-
-/*
- * Synopsis     : bool startIRF(int _PIN_ONE) *
- * Arguments    : int  _PIN_ONE : Digital input pin of long distance IR sensor
- *
- * Description  : enables the IR sensor to start reading
- * 
- * Returns      : bool: 1-started, 0 failed to start
- */
-bool startDistanceIR(int _PIN_ONE){
-    
-    pinMode(_PIN_ONE,OUTPUT);
-    digitalWrite(_PIN_ONE,HIGH);
-    return false;
-
-}//end startIRF
-
-/*
- * Synopsis     : float readIRF(int _PIN_ONE, int _PIN_TWO) *
- * Arguments    : int  _PIN_ONE : Analogue output pin of long
-                                  distance IR sensor
- *
- * Description  : returns distance from IR sensor in cm, Range 10-150 cm
- * 
- * Returns      : float: distnce in cm
- */
-float readDistanceIR(int _PIN_ONE){
-    
-    int val;
-    delayMicroseconds(22);
-    val = analogRead(_PIN_ONE);
-    delay(20);
-    return (float)exp((1/(val * 5.0/1024.0)+1.723)/0.909);
-
-}//end readIRF
-
-/*
- * Synopsis     : bool stopIRF(int _PIN_ONE) *
- * Arguments    : int  _PIN_ONE : Digital input pin of long distance IR sensor
- *
- * Description  : stops IR sensor from reading data 
- *                WHEN AND WHY DO WE WANT TO CALL THIS?
- * 
- * Returns      : bool: 1-Stopped, 0-failed
- */
-bool stopDistanceIR(int _PIN_ONE){
-
-    digitalWrite(_PIN_ONE,LOW);
-    return true; 
-
-}//end stopIRF

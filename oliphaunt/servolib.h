@@ -39,7 +39,10 @@ void driveServoRight(float setting);
 //Panning angles are specified as -90 to +90 deg
 void setPanningServo(float target_angle);
 float getPanningServoSetpoint();
-unsigned long estimatePanningTime(float target_angle); //returns a duration in ms, arc specified in deg
+
+//returns a duration in ms, 
+//will NOT return a valid value if called immediately after setPanningServo()
+unsigned long estimatePanningTime(float target_angle); 
 
 
 
