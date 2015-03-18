@@ -7,11 +7,10 @@
     Parameters:
     0 - floatval: The target heading
 */
+#define STOP_TOLERANCE 3.0  //degrees
+#define SLOW_TOLERANCE 15.0
 class TurnInPlaceToHeadingAction : public SingletonAction<TurnInPlaceToHeadingAction> {
 private:
-    static const int GainDiv = 10; 
-    static const float Tolerance = 3; //degrees
-    
     float targetHeading;
     float targetBearing;
 public:

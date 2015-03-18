@@ -14,13 +14,13 @@ void TurnInPlaceToHeadingAction::setup(ActionArgs *args) {
 
 boolean TurnInPlaceToHeadingAction::checkFinished() {
     targetBearing = headingToBearing(targetHeading);
-    return (fabs(targetBearing) <= Tolerance);
+    return (fabs(targetBearing) <= STOP_TOLERANCE);
 }
 
 void TurnInPlaceToHeadingAction::doWork() {
     DriveCmd fwd = FULL_FWD;
     DriveCmd rev = FULL_REV;
-    if(fabs(targetBearing) <= 15) {
+    if(fabs(targetBearing) <= SLOW_TOLERANCE) {
         fwd = HALF_FWD;
         rev = HALF_REV;
     }
