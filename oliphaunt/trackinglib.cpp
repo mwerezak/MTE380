@@ -72,10 +72,7 @@ void setCurrentPosition(vector2 newPos) {
 }
 
 vector2 getCurrentPosition() {
-    unsigned long cur_time = millis();
     vector2 pos;
-    pos.x = posXIntegrator.evalResult(cur_time);
-    pos.y = posYIntegrator.evalResult(cur_time);
     return pos;
 }
 
@@ -102,13 +99,6 @@ void updateCurrentVelocity(vector2 new_vel) {
 
 
 /** Helper Functions **/
-
-float normalizeAngle(float angle, float max_angle) {
-    float min_angle = max_angle - 360;
-    while (angle <= min_angle) { angle += 360; }
-    while (angle >  max_angle) { angle -= 360; }
-    return angle;
-}
 
 //converts a heading into a bearing
 float headingToBearing(float heading) {

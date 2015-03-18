@@ -19,7 +19,10 @@
 #define SERVO_DRIVE_RIGHT_PWM_MIN       1
 
 // Panning Servo
-#define SERVO_PANNNING_PWM_PIN          10
+#define SERVO_PANNING_PWM_PIN          10
+#define SERVO_PANNING_PWM_MAX          255
+#define SERVO_PANNING_PWM_MIN          0
+#define SERVO_PANNING_SPEED            2.833333 //ms/deg
 
 
 void driveServosStop();
@@ -33,9 +36,10 @@ void driveServoRightCmd(char command);
 void driveServoLeft(float setting);
 void driveServoRight(float setting);
 
-void setPanningServo(float angle);
+//Panning angles are specified as -90 to +90 deg
+void setPanningServo(float target_angle);
 float getPanningServoSetpoint();
-
+unsigned long estimatePanningTime(float target_angle); //returns a duration in ms, arc specified in deg
 
 
 
