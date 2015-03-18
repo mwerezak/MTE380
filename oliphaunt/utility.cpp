@@ -30,3 +30,17 @@ float getShortestArc(float angle1, float angle2) {
     return (arc > 180.0)? 360.0 - arc : arc;
 }
 
+/** Delay Timer **/
+
+void DelayTimer::set(unsigned long _delay_time) {
+    delay_time = _delay_time;
+    reset();
+}
+
+void DelayTimer::reset() {
+    last_set_time = millis();
+}
+
+boolean DelayTimer::expired() {
+    return (millis() >= delay_time + last_set_time);
+}

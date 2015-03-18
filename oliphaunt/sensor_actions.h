@@ -1,23 +1,40 @@
-#include "action.h"
+#ifndef _SENSOR_ACTIONS_H
+#define _SENSOR_ACTIONS_H
 
+#include "action.h"
+#include "utility.h"
 
 /*
     Parameters:
     0 - floatval: The target angle
-    1 - ptrval: A pointer to a float to write the reading.
 */
-class PanIRAndTakeReading : public SingletonAction<PanIRAndTakeReading> {
+class PanIRServo : public SingletonAction<PanIRServo> {
 private:
-    const static int NumReadings = 5;
-    int reading_count;
-    float readings[NumReadings];
-    
-    unsigned long wait_until;
-    float *result_ptr;
+    DelayTimer wait;
 public:
-    virtual char* getName() { return "PanIRAndTakeReading"; }
+    virtual char* getName() { return "PanIRServo"; }
+    virtual void setup(ActionArgs *args);
+    virtual boolean checkFinished();
+};
+
+/*
+    Parameters:
+    1 - ptrval (float*): A pointer to a float to write the reading.
+*/
+#define NUM_READINGS 5
+class IRDistanceReading : public SingletonAction<IRDistanceReading> {
+private:
+    int reading_count;
+    float readings[NUM_READINGS];
+    DelayTimer ir_refresh;
+    
+    float *return_ptr;
+public:
+    virtual char* getName() { return "IRDistanceReading"; }
     virtual void setup(ActionArgs *args);
     virtual boolean checkFinished();
     virtual void doWork();
     virtual void cleanup();
 };
+
+#endif
