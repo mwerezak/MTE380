@@ -25,23 +25,26 @@ void setup() {
 	Serial.println("Initializing action queue...");
 	initQueue();
 	
+	Serial.println("Initializing servo drivers...");
+	initDriveServos();
 	
-	//ActionArgs args;
-	//ARGS(args, 0, floatval) = 50.0;
-	//queueAction(TurnInPlaceToHeadingAction::instance(), &args);
+	ActionArgs args;
+	ARGS(args, 0, floatval) = 50.0;
+	queueAction(TurnInPlaceToHeadingAction::instance(), &args);
 	
-	driveServoLeft(FULL_FWD);
+	/*
+	_setDriveServoRight(FULL_FWD);
 	delay(3000);
-	driveServoLeft(HALF_FWD);
+	_setDriveServoRight(HALF_FWD);
 	delay(3000);
-	driveServoLeft(HOLD_STOP);
+	_setDriveServoRight(HOLD_STOP);
 	delay(3000);
-	driveServoLeft(HALF_REV);
+	_setDriveServoRight(HALF_REV);
 	delay(3000);
-	driveServoLeft(FULL_REV);
+	_setDriveServoRight(FULL_REV);
 	delay(3000);
-	driveServoLeft(NEUTRAL);
-	
+	_setDriveServoRight(NEUTRAL);
+	*/
 	
 	delay(1000);
 }
@@ -49,4 +52,5 @@ void setup() {
 void loop() {
 	processMain();
 	processTracking();
+	processDriveServos();
 }

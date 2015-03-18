@@ -8,17 +8,56 @@
 
 /** Drive Servos **/
 
+static unsigned long last_update_left, last_update_right;
+static boolean update_left, update_right;
+static DriveCmd command_left, command_right;
+
+void _setDriveServoLeft(DriveCmd setting);
+void _setDriveServoRight(DriveCmd setting);
+
+void initDriveServos() {
+    unsigned long time = millis();
+    last_update_left = time;
+    last_update_right = time;
+
+    update_left = false;
+    update_right = false;
+}
+
+void processDriveServos() {
+    if(update_left && millis() >= last_update_left + SERVO_DRIVE_DEADTIME) {
+        _setDriveServoLeft(command_left);
+        last_update_left = millis();
+        update_left = false;
+    }
+    if(update_right && millis() >= last_update_right + SERVO_DRIVE_DEADTIME) {
+        _setDriveServoRight(command_right);
+        last_update_right = millis();
+        update_right = false;
+    }
+}
+
 void driveServosStop() {
-    analogWrite(SERVO_DRIVE_LEFT_PIN, SERVO_DRIVE_LEFT_STOP);
-    analogWrite(SERVO_DRIVE_RIGHT_PIN, SERVO_DRIVE_RIGHT_STOP);
+    driveServoLeft(HOLD_STOP);
+    driveServoRight(HOLD_STOP);
 }
 
 void driveServosNeutral() {
-    analogWrite(SERVO_DRIVE_LEFT_PIN, SERVO_DRIVE_LEFT_NEUTRAL);
-    analogWrite(SERVO_DRIVE_RIGHT_PIN, SERVO_DRIVE_RIGHT_NEUTRAL);
+    driveServoLeft(NEUTRAL);
+    driveServoRight(NEUTRAL);
 }
 
-void driveServoLeft(DriveCmd setting) {
+void driveServoLeft(DriveCmd command) {
+    command_left = command;
+    update_left = true;
+}
+
+void driveServoRight(DriveCmd command) {
+    command_right = command;
+    update_right = true;
+}
+
+void _setDriveServoLeft(DriveCmd setting) {
     byte cmd = 0;
     switch(setting) {
         case FULL_FWD:
@@ -40,18 +79,14 @@ void driveServoLeft(DriveCmd setting) {
             cmd = SERVO_DRIVE_LEFT_NEUTRAL;
             break;
     }
-    
     analogWrite(SERVO_DRIVE_LEFT_PIN, cmd);
     
     #ifdef DBG_DRIVE_SERVOS
-    Serial.print("LEFT> setting: ");
-    Serial.print(setting);
-    Serial.print(", cmd: ");
-    Serial.println(cmd);
+    PRINTF("SERVO LEFT> %d", setting);
     #endif
 }
 
-void driveServoRight(DriveCmd setting) {
+void _setDriveServoRight(DriveCmd setting) {
     byte cmd = 0;
     switch(setting) {
         case FULL_FWD:
@@ -73,16 +108,13 @@ void driveServoRight(DriveCmd setting) {
             cmd = SERVO_DRIVE_RIGHT_NEUTRAL;
             break;
     }
-    
-    analogWrite(SERVO_DRIVE_RIGHT_PIN, cmd);  
+    analogWrite(SERVO_DRIVE_RIGHT_PIN, cmd);
     
     #ifdef DBG_DRIVE_SERVOS
-    Serial.print("RIGHT> setting: ");
-    Serial.print(setting);
-    Serial.print(", cmd: ");
-    Serial.println(cmd);
+    PRINTF("SERVO RIGHT> %d", setting);
     #endif
 }
+
 
 /** Panning Servo **/
 static float panning_setpoint;

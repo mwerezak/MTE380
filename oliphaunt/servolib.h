@@ -1,11 +1,7 @@
 #ifndef _SERVOLIB_H
 #define _SERVOLIB_H
 
-#define SERVO_DRIVE_FULL_FORWARD        -1
-#define SERVO_DRIVE_HALF_FORWARD        -1
-
-#define SERVO_DRIVE_FULL_REVERSE        -1
-#define SERVO_DRIVE_HALF_REVERSE        -1
+#define SERVO_DRIVE_DEADTIME        200 //ms
 
 // M1 - LEFT
 #define SERVO_DRIVE_LEFT_PIN        11
@@ -23,11 +19,11 @@
 #define SERVO_DRIVE_RIGHT_NEUTRAL   0
 #define SERVO_DRIVE_RIGHT_STOP      180
 
-#define SERVO_DRIVE_RIGHT_FULL_FWD  250
-#define SERVO_DRIVE_RIGHT_HALF_FWD  188
+#define SERVO_DRIVE_RIGHT_FULL_FWD  1
+#define SERVO_DRIVE_RIGHT_HALF_FWD  75
 
-#define SERVO_DRIVE_RIGHT_FULL_REV  1
-#define SERVO_DRIVE_RIGHT_HALF_REV  75
+#define SERVO_DRIVE_RIGHT_FULL_REV  250
+#define SERVO_DRIVE_RIGHT_HALF_REV  190     //188
 
 // Panning Servo
 #define SERVO_PANNING_PIN          10
@@ -44,6 +40,9 @@ typedef enum {
     FULL_REV=-2, 
     NEUTRAL=0 
 } DriveCmd;
+
+void initDriveServos();
+void processDriveServos();
 
 void driveServosStop();
 void driveServosNeutral();
