@@ -13,6 +13,8 @@
 
 //ActionManager actionManager;
 
+#include "servolib.h"
+
 void setup() {
 	Serial.begin(115200);
 	Wire.begin();
@@ -24,9 +26,22 @@ void setup() {
 	initQueue();
 	
 	
-	ActionArgs args;
-	ARGS(args, 0, floatval) = 50.0;
-	queueAction(TurnInPlaceToHeadingAction::instance(), &args);
+	//ActionArgs args;
+	//ARGS(args, 0, floatval) = 50.0;
+	//queueAction(TurnInPlaceToHeadingAction::instance(), &args);
+	
+	driveServoLeft(FULL_FWD);
+	delay(3000);
+	driveServoLeft(HALF_FWD);
+	delay(3000);
+	driveServoLeft(HOLD_STOP);
+	delay(3000);
+	driveServoLeft(HALF_REV);
+	delay(3000);
+	driveServoLeft(FULL_REV);
+	delay(3000);
+	driveServoLeft(NEUTRAL);
+	
 	
 	delay(1000);
 }

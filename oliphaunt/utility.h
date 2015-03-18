@@ -1,10 +1,11 @@
 #define DBG_PRINT
 
+#include <Arduino.h>
 #include <math.h>
 
 #define SQR(x) square(x)
 #define CUBE(x) x*square(x)
-#define LINSCALE(x, IN_MIN, IN_MAX, OUT_MIN, OUT_MAX) (x - IN_MIN)*(OUT_MAX - OUT_MIN)/(IN_MAX - IN_MIN) + OUT_MIN;
+#define LINSCALE(x, IN_MIN, IN_MAX, OUT_MIN, OUT_MAX) (constrain(x, IN_MIN, IN_MAX) - IN_MIN)*(OUT_MAX - OUT_MIN)/(IN_MAX - IN_MIN) + OUT_MIN
 
 #define TORAD(x) x*M_PI/180
 #define TODEG(x) x*180*M_1_PI

@@ -34,8 +34,8 @@ class DriveAction : public SingletonAction<DriveAction> {
             Serial.print(duration);
             Serial.println(")");
             
-            analogWrite(SERVO_DRIVE_LEFT_PWM_PIN, SERVO_DRIVE_LEFT_PWM_NEUTRAL + left);
-            analogWrite(SERVO_DRIVE_RIGHT_PWM_PIN, SERVO_DRIVE_RIGHT_PWM_NEUTRAL + right);
+            analogWrite(SERVO_DRIVE_LEFT_PIN, SERVO_DRIVE_LEFT_NEUTRAL + left);
+            analogWrite(SERVO_DRIVE_RIGHT_PIN, SERVO_DRIVE_RIGHT_NEUTRAL + right);
             end_at += duration + millis();
         }
         
@@ -50,8 +50,8 @@ class DriveAction : public SingletonAction<DriveAction> {
         //though we should still clean up in case someone forces us to stop
         void cleanup() {
             //digitalWrite(SERVO_DRIVE_CTL_PIN, LOW); //neutral the drive servos
-            analogWrite(SERVO_DRIVE_LEFT_PWM_PIN, 0);
-            analogWrite(SERVO_DRIVE_RIGHT_PWM_PIN, 0);
+            analogWrite(SERVO_DRIVE_LEFT_PIN, 0);
+            analogWrite(SERVO_DRIVE_RIGHT_PIN, 0);
         }
 };
 #endif

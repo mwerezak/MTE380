@@ -18,12 +18,14 @@ boolean TurnInPlaceToHeadingAction::checkFinished() {
 }
 
 void TurnInPlaceToHeadingAction::doWork() {
+    /*
     char servoCommand = targetBearing/GainDiv;
     if(servoCommand < 10) servoCommand = 10;
     if(servoCommand > -10) servoCommand = -10;
     
     driveServoLeft(servoCommand);
     driveServoRight(-servoCommand);
+    */
 }
 
 void TurnInPlaceToHeadingAction::cleanup() {
