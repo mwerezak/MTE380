@@ -5,6 +5,7 @@
 
 #include <Arduino.h>
 #include <math.h>
+#include "action.h"
 
 #define SQR(x) square(x)
 #define CUBE(x) x*square(x)
@@ -21,6 +22,11 @@ extern char __printbuf[PRINT_BUF_SIZE];
 #define PRINTF(format, ...) (void)0
 #endif
 
+template <typename T> void printArray(T *array, int len, char *name);
+
+float normalizeAngle(float angle, float max_angle);
+float getShortestArc(float angle1, float angle2);
+
 class DelayTimer {
 private:
     unsigned long last_set_time, delay_time;
@@ -32,9 +38,17 @@ public:
     boolean expired();
 };
 
-template <typename T> void printArray(T *array, int len, char *name);
-
-float normalizeAngle(float angle, float max_angle);
-float getShortestArc(float angle1, float angle2);
+/*
+    Parameters:
+    0 - ulongval: The time in ms to wait
+*/
+class WaitAction : public SingletonAction<WaitAction> {
+private:
+    DelayTimer wait;
+public:
+    virtual char* getName() { return "WaitAction"; }
+    virtual void setup(ActionArgs *args);
+    virtual boolean checkFinished();
+};
 
 #endif

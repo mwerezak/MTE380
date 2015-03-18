@@ -44,3 +44,13 @@ void DelayTimer::reset() {
 boolean DelayTimer::expired() {
     return (millis() >= delay_time + last_set_time);
 }
+
+/** WaitAction **/
+
+void WaitAction::setup(ActionArgs *args) {
+    unsigned long wait_time = ARGSP(args, 0, ulongval);
+    wait.set(wait_time);
+}
+boolean WaitAction::checkFinished() {
+    return wait.expired();
+}
