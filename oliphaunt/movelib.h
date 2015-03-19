@@ -41,4 +41,19 @@ public:
     virtual void cleanup();
 };
 
+/*
+    Parameters:
+    None
+*/
+class TestDriveAction : public SingletonAction<TestDriveAction> {
+private:
+    DelayTimer timer;
+public:
+    virtual char* getName() { return "TestDriveAction"; }
+    virtual void setup(ActionArgs *args);
+    virtual boolean checkFinished();
+    virtual void doWork();
+    virtual void cleanup();
+};
+
 #endif
