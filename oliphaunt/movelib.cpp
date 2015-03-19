@@ -13,6 +13,7 @@ void TurnInPlaceToHeadingAction::setup(ActionArgs *args) {
     targetBearing = headingToBearing(targetHeading);
     
     driveServosStop();
+    releaseGyro();
 }
 
 boolean TurnInPlaceToHeadingAction::checkFinished() {
@@ -41,6 +42,7 @@ void TurnInPlaceToHeadingAction::doWork() {
 
 void TurnInPlaceToHeadingAction::cleanup() {
     driveServosNeutral();
+    holdGyro();
 }
 
 /** DriveToLocationAction **/
@@ -50,7 +52,8 @@ void DriveToLocationAction::setup(ActionArgs *args) {
     target_pos.y = ARGSP(args, 1, floatval);
     tolerance_rad = ARGSP(args, 2, floatval);
     
-    measureSpeedChange(100);
+    measureSpeedChange(300);
+    releaseGyro();
 }
 
 boolean DriveToLocationAction::checkFinished() {
@@ -75,11 +78,6 @@ boolean DriveToLocationAction::checkFinished() {
 }
 
 void DriveToLocationAction::doWork() {
-    //update the current speed if we can
-    if(doneSpeedMeasurement()) {
-        updateCurrentSpeed(getMeasuredSpeed());
-    }
-
     //Check if we've gone too far off course. If so, stop and turn.
     if(fabs(target_bearing) > angle_tolerance) {
         ActionArgs turn_args, drive_args;
@@ -94,11 +92,19 @@ void DriveToLocationAction::doWork() {
     } else {
         driveServoLeft(FULL_FWD);
         driveServoRight(FULL_FWD);
+        
+        //update the current speed if we can
+        if(doneSpeedMeasurement()) {
+            //make sure to update this every tick
+            //to account for change in direction
+            updateCurrentSpeed(getMeasuredSpeed());
+        }
     }
 }
 
 void DriveToLocationAction::cleanup() {
     driveServosNeutral();
     updateCurrentSpeed(0); //notify tracking that we've stopped
+    holdGyro();
 }
 
