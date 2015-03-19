@@ -27,6 +27,7 @@ void IRDistanceReading::setup(ActionArgs *args) {
     return_ptr = (float*) ARGSP(args, 0, ptrval);
     
     reading_count = 0;
+    enableDistanceIR();
     ir_refresh.set(DISTIR_REFRESH_TIME);
 }
 
@@ -43,6 +44,8 @@ void IRDistanceReading::doWork() {
 }
 
 void IRDistanceReading::cleanup() {
+    disableDistanceIR();
+
     //calculate the average and write it to return_ptr
     float total = 0;
     for(int i = 0; i < NumReadings; i++) {

@@ -14,9 +14,9 @@
 
 #define PROXIR_PIN          24
 
-#define DISTIR_CTL_PIN      26
-#define DISTIR_DATA_PIN     0
-#define DISTIR_REFRESH_TIME 20 //ms
+#define DISTIR_CTL_PIN      48
+#define DISTIR_DATA_PIN     2
+#define DISTIR_REFRESH_TIME 25 //ms
 
 void initSensors();
 
