@@ -108,4 +108,31 @@ void DriveToLocationAction::cleanup() {
     holdGyro();
 }
 
+/** TestDriveAction **/
+
+void TestDriveAction::setup(ActionArgs *args) {
+    timer.set(5000);
+    
+    releaseGyro();
+    measureSpeedChange(300);
+    driveServoLeft(FULL_FWD);
+    driveServoRight(FULL_FWD);
+}
+
+boolean TestDriveAction::checkFinished() {
+    return timer.expired();
+}
+
+void TestDriveAction::doWork() {
+    if(doneSpeedMeasurement()) {
+        updateCurrentSpeed(getMeasuredSpeed());
+    }
+}
+
+void TestDriveAction::cleanup() {
+    driveServosNeutral();
+    updateCurrentSpeed(0); //notify tracking that we've stopped
+    holdGyro();
+}
+
 
