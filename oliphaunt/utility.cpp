@@ -1,6 +1,7 @@
 #include "utility.h"
 
 #include <Arduino.h>
+#include <math.h>
 
 #ifdef DBG_PRINT
 char __printbuf[PRINT_BUF_SIZE];
@@ -18,6 +19,8 @@ void printArray(T *array, int len, char *name) {
     Serial.println(" };");
 }
 
+/** Geometry/Nav Helpers **/
+
 float normalizeAngle(float angle, float max_angle) {
     float min_angle = max_angle - 360;
     while (angle <= min_angle) { angle += 360; }
@@ -28,6 +31,12 @@ float normalizeAngle(float angle, float max_angle) {
 float getShortestArc(float angle1, float angle2) {
     float arc = normalizeAngle(angle1 - angle2, 360);
     return (arc > 180.0)? 360.0 - arc : arc;
+}
+
+float getDistance(vector2 p1, vector2 p2) {
+    float dx = p1.x - p2.x;
+    float dy = p1.y - p2.y;
+    return hypot(dx, dy);
 }
 
 /** Delay Timer **/

@@ -72,7 +72,11 @@ void setCurrentPosition(vector2 newPos) {
 }
 
 vector2 getCurrentPosition() {
+    unsigned long time = millis();
+
     vector2 pos;
+    pos.x = posXIntegrator.evalResult(time);
+    pos.y = posYIntegrator.evalResult(time);
     return pos;
 }
 
@@ -105,5 +109,14 @@ float headingToBearing(float heading) {
     float bearing = normalizeAngle(heading - getCurrentHeading(), 180);
 }
 
-//updateHeading();
+float getHeadingTo(vector2 loc) {
+    vector2 pos = getCurrentPosition();
+    
+    //put ourselves at the origin
+    loc.x -= pos.x;
+    loc.y -= pos.y;
+    
+    float angle = -atan2(loc.x, loc.y);
+    return normalizeAngle(TODEG(angle), 360);
+}
 

@@ -31,12 +31,10 @@
 #define ACC_Y_AXIS y
 #define ACC_X_AXIS z
 
-typedef struct Vector2Struct {
-    float x;
-    float y;
-} vector2;
+#include "utility.h"
 
 float headingToBearing(float heading);
+float getHeadingTo(vector2 loc);
 
 void setCurrentHeading(float newHdg);
 void setCurrentPitch(float newPitch);
