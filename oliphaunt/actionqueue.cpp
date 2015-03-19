@@ -95,7 +95,6 @@ void queueAction(Action* action, ActionArgs args) {
     _actionQueue[endIdx].args = args;
 }
 
-
 //removes and returns the first item in the queue
 ActionQueueItem* _removeNext() {
     if(queueIsEmpty()) return NULL;
@@ -117,7 +116,6 @@ ActionQueueItem* _removeLast() {
     
     return removed;
 }
-
 
 //returns true if the queue is not empty
 boolean queueIsEmpty() {
