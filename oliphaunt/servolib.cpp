@@ -1,4 +1,6 @@
-//#define DBG_DRIVE_SERVOS
+
+#define DBG_DRIVE_SERVOS
+
 #define DBG_PANNING_SERVO
 #define DBG_CAPTURE_SERVOS
 
@@ -24,6 +26,10 @@ void initDriveServos() {
 
     update_left = false;
     update_right = false;
+    
+    driveServosNeutral();
+    setPanningServo(SERVO_PANNING_MAX_ANGLE);
+    setScoopServo(SERVO_SCOOP_MAX_ANGLE);
 }
 
 void processDriveServos() {
@@ -122,7 +128,8 @@ void _setDriveServoRight(DriveCmd setting) {
 static float panning_setpoint;
 
 void setPanningServo(float angle) {
-    float fcmd = LINSCALE(angle, -90, +90, SERVO_PANNING_MIN, SERVO_PANNING_MAX);
+    angle = constrain(angle, SERVO_PANNING_MIN_ANGLE, SERVO_PANNING_MAX_ANGLE);
+    float fcmd = LINSCALE(angle, SERVO_PANNING_MIN_ANGLE, SERVO_PANNING_MAX_ANGLE, SERVO_PANNING_MIN, SERVO_PANNING_MAX);
     byte cmd = (byte) round(fcmd);
     analogWrite(SERVO_PANNING_PIN, cmd);
     panning_setpoint = angle;
@@ -147,7 +154,8 @@ unsigned long estimatePanningTime(float target_angle) {
 /** Scoop and Shovel Servos **/
 
 void setScoopServo(float target_angle) {
-    float fcmd = LINSCALE(target_angle, 0, 180, SERVO_SCOOP_MIN, SERVO_SCOOP_MAX);
+    target_angle = constrain(target_angle, SERVO_SCOOP_MIN_ANGLE, SERVO_SCOOP_MAX_ANGLE);
+    float fcmd = LINSCALE(target_angle, SERVO_SCOOP_MIN_ANGLE, SERVO_SCOOP_MAX_ANGLE, SERVO_SCOOP_MIN, SERVO_SCOOP_MAX);
     byte cmd = (byte) round(fcmd);
     analogWrite(SERVO_SCOOP_PIN, cmd);
     
