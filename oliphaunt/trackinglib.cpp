@@ -31,7 +31,7 @@ void initTracking() {
     Serial.println("Initializing accelerometer...");
     initAccMag();
 
-    gyro_enabled = true;
+    gyro_enabled = false;
     acc_enabled = false;
     
     //initialize integrators
@@ -81,6 +81,9 @@ void processTracking() {
 /** Gyro **/
 
 void holdGyro() {
+    unsigned long time = millis();
+    hdgIntegrator.feedData(0, time);
+    pitchIntegrator.feedData(0, time);
     gyro_enabled = false;
 }
 
