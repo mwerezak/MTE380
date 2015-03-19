@@ -14,7 +14,7 @@
 #define ACC_GAIN_Z 0.059841
 
 #define ACC_SIGN_X 1
-#define ACC_SIGN_Y 1
+#define ACC_SIGN_Y -1
 #define ACC_SIGN_Z 1
 
 typedef LSM303::vector<int16_t> acc_raw_data;

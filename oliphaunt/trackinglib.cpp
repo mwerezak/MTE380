@@ -1,6 +1,6 @@
 
-//#define DBG_GYRO_TRACKING
-#define DBG_INS_TRACKING
+#define DBG_GYRO_TRACKING
+//#define DBG_INS_TRACKING
 
 #include "trackinglib.h"
 

@@ -124,14 +124,14 @@ void IRSweepForTarget::doWork() {
     if(farlimit > last_reading && last_reading > nearlimit) {
         if(!found_left) {
             //found the left corner
-            found_left = true;
+            //found_left = true;
             target_left = current_angle;
         }
     }
     else {
         if(found_left && !found_right) {
             //found the right corner
-            found_right = true;
+            //found_right = true;
             target_right = current_angle;
         }
     }

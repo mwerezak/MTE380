@@ -15,7 +15,7 @@
 #define GYRO_GAIN_Y 0.00875
 #define GYRO_GAIN_Z 0.00875
 
-#define GYRO_SIGN_X -1
+#define GYRO_SIGN_X 1
 #define GYRO_SIGN_Y 1
 #define GYRO_SIGN_Z -1
 
