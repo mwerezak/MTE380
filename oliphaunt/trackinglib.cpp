@@ -20,6 +20,9 @@ void initTracking() {
     //initialize sensors
     Serial.println("Initializing gyro...");
     initGyro();
+    
+    Serial.println("Initializing accelerometer...");
+    initAccMag();
 
     //initialize integrators
     setCurrentHeading(0.0);

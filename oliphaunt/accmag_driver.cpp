@@ -15,7 +15,7 @@ void initAccMag() {
         while (1); //trap
     }
     accmag.enableDefault();
-    accmag.writeReg(LSM303::CTRL1, 0xA7); //1600 Hz, BDU default, all axis enable
+    accmag.writeReg(LSM303::CTRL1, 0x77); //200 Hz, BDU default, all axis enable
     accmag.writeReg(LSM303::CTRL2, 0xC0); //50 Hz AA filter, 2G full scale
     //accmag.writeReg(LSM303::CTRL7, 0x02); //
     
