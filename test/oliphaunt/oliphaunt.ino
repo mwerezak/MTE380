@@ -9,6 +9,9 @@ int stoptime;
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
+  
+  startIRF(48);
+  
 //  pinMode(2, OUTPUT);
 //  a=600;
 //  time = 0;
@@ -46,6 +49,8 @@ void setup() {
 }
 
 void loop() {
+	Serial.println(readIRF(1, 52));
+
   // put your main code here, to run repeatedly:
     /* Serial.println("Start - 150");
     analogWrite(3,150);
