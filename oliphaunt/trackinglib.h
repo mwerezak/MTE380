@@ -31,6 +31,8 @@
 #define ACC_X_AXIS z
 #define ACC_Y_AXIS y
 
+#define ACC_TOLERANCE 15.0   //cm/s^2
+
 typedef struct Vector2Struct {
     float x;
     float y;

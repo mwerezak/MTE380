@@ -1,6 +1,8 @@
 #ifndef _NUMERICLIB_H
 #define _NUMERICLIB_H
 
+template<typename T> void pushArray(T array[], T new_val);
+
 class NumericIntegrator {
 public:
     virtual void reset(float init_value) = 0;
@@ -16,6 +18,13 @@ public:
     // This can be used to reduce the number of calculations.
     virtual float getLastResult() = 0;
     virtual unsigned long getLastUpdateTime() = 0;
+};
+
+class DiscreteFilter {
+public:
+    virtual void reset() = 0;
+    virtual void feedData(float new_val) = 0;
+    virtual float getResult() = 0;
 };
 
 class EulerIntegrator: public NumericIntegrator {
@@ -48,7 +57,6 @@ private:
     float update_diff[ABI_BUF_SIZE]; //munit/s
     double beta[ABI_BUF_SIZE];
     
-    template<typename T> void pushArray(T array[], T new_val);
     void calcBetas(unsigned long eval_time);
     float adamsBashforthStep(unsigned long tstep);
     float eulerStep(unsigned long tstep); //backup for when we don't have enough data
@@ -60,6 +68,20 @@ public:
     virtual float evalResult(unsigned long eval_time);
     virtual float getLastResult();
     virtual unsigned long getLastUpdateTime();
+};
+
+class AveragingFilter : public DiscreteFilter {
+private:
+    static const int WindowSize = 10;
+    int update_count;
+    float window[WindowSize];
+    
+public:
+    AveragingFilter() { reset(); }
+    
+    virtual void reset();
+    virtual void feedData(float new_val);
+    virtual float getResult();
 };
 
 #endif

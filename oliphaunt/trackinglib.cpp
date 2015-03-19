@@ -17,8 +17,12 @@ AdamsBashforthIntegrator hdgIntegrator;
 EulerIntegrator pitchIntegrator;
 
 #ifdef INERTIAL_TRACKING
+AveragingFilter accXFilter;
+AveragingFilter accYFilter;
+
 AdamsBashforthIntegrator velXIntegrator;
 AdamsBashforthIntegrator velYIntegrator;
+
 AdamsBashforthIntegrator posXIntegrator;
 AdamsBashforthIntegrator posYIntegrator;
 #else
@@ -64,8 +68,14 @@ void processTracking() {
     if(updateAcc()) {
         acc_data acc = getAccReading();
         
-        velXIntegrator.feedData(acc.ACC_X_AXIS, acc.update_time);
-        velYIntegrator.feedData(acc.ACC_Y_AXIS, acc.update_time);
+        if(fabs(acc.x) <= ACC_TOLERANCE) acc.ACC_X_AXIS = 0.0;
+        if(fabs(acc.y) <= ACC_TOLERANCE) acc.ACC_Y_AXIS = 0.0;
+        
+        accXFilter.feedData(acc.ACC_X_AXIS);
+        accYFilter.feedData(acc.ACC_Y_AXIS);
+        
+        velXIntegrator.feedData(accXFilter.getResult(), acc.update_time);
+        velYIntegrator.feedData(accYFilter.getResult(), acc.update_time);
         //posXIntegrator.feedData(velXIntegrator.getLastResult(), acc.update_time);
         //posYIntegrator.feedData(velYIntegrator.getLastResult(), acc.update_time);
         
@@ -120,6 +130,8 @@ void setCurrentPosition(vector2 newPos) {
     #ifdef INERTIAL_TRACKING
     velXIntegrator.reset(0.0);
     velYIntegrator.reset(0.0);
+    accXFilter.reset();
+    accYFilter.reset();
     #endif
 }
 
