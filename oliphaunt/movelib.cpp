@@ -106,6 +106,9 @@ void DriveToLocationAction::cleanup() {
     driveServosNeutral();
     updateCurrentSpeed(0); //notify tracking that we've stopped
     holdGyro();
+    
+    //trap and just print the result repeatedly
+    while(1) Serial.println(getMeasuredSpeed());
 }
 
 

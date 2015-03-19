@@ -30,7 +30,7 @@ void setup() {
 	
 	ActionArgs args;
 	ARGS(args, 0, floatval) = 50.0;
-	queueAction(TurnInPlaceToHeadingAction::instance(), &args);
+	queueAction(DriveToLocationAction::instance(), &args);
 	
 	/*
 	_setDriveServoRight(FULL_FWD);
