@@ -15,6 +15,7 @@
 void initSensors() {
     //distance IR
     pinMode(DISTIR_CTL_PIN, OUTPUT);
+    digitalWrite(DISTIR_CTL_PIN, LOW);
     
     //ultrasound
     pinMode(USOUND_DATCTL_PIN, INPUT); //might as well keep the usound pin in the high-impedance state
