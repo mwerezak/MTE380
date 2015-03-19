@@ -28,8 +28,8 @@
 #define GYRO_HDG_AXIS x
 #define GYRO_PITCH_AXIS z
 
-#define ACC_Y_AXIS y
 #define ACC_X_AXIS z
+#define ACC_Y_AXIS y
 
 typedef struct Vector2Struct {
     float x;
