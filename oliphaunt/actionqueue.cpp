@@ -102,7 +102,10 @@ int _endIdx() {
 
 //Adds to the front of the queue, essentially
 void setNextAction(Action *next, ActionArgs *args) {
-    if(queueIsFull()) return;
+    if(queueIsFull()) {
+        Serial.println("Action queue overrun!");
+        while(1);
+    }
     
     if(--_startIdx < 0) _startIdx = ACTION_QUEUE_SIZE - 1;
     _queueLen++;
@@ -113,7 +116,10 @@ void setNextAction(Action *next, ActionArgs *args) {
 
 //Adds to the end of the queue
 void queueAction(Action *action, ActionArgs *args) {
-    if(queueIsFull()) return;
+    if(queueIsFull()) {
+        Serial.println("Action queue overrun!");
+        while(1);
+    }
     
     _queueLen++;
     
