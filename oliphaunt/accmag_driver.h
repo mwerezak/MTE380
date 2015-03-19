@@ -5,13 +5,13 @@
 
 #include <LSM303.h>
 
-#define ACC_READ_DELAY 625 //microseconds, 1600 Hz
+#define ACC_READ_DELAY 5000 //microseconds, 200 Hz
 
 // LSM303 accelerometer: 2G full scale
-// 0.061 mG/digit; 1G = 0.000061; 1 mm/s^2 = 0.59841
-#define ACC_GAIN_X 0.59841
-#define ACC_GAIN_Y 0.59841
-#define ACC_GAIN_Z 0.59841
+// 0.061 mG/digit; 1G = 0.000061; 1 cm/s^2 = 0.059841
+#define ACC_GAIN_X 0.059841
+#define ACC_GAIN_Y 0.059841
+#define ACC_GAIN_Z 0.059841
 
 #define ACC_SIGN_X 1
 #define ACC_SIGN_Y 1

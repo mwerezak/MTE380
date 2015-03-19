@@ -1,4 +1,4 @@
-#define DBG_DRIVE_SERVOS
+//#define DBG_DRIVE_SERVOS
 
 #include "servolib.h"
 

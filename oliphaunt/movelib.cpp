@@ -1,7 +1,10 @@
 #include "movelib.h"
+
+#include <math.h>
 #include "servolib.h"
 #include "trackinglib.h"
-#include <math.h>
+#include "actionqueue.h"
+#include "utility.h"
 
 /** TurnInPlaceToHeadingAction **/
 
@@ -39,3 +42,63 @@ void TurnInPlaceToHeadingAction::doWork() {
 void TurnInPlaceToHeadingAction::cleanup() {
     driveServosNeutral();
 }
+
+/** DriveToLocationAction **/
+
+void DriveToLocationAction::setup(ActionArgs *args) {
+    target_pos.x = ARGSP(args, 0, floatval);
+    target_pos.y = ARGSP(args, 1, floatval);
+    tolerance_rad = ARGSP(args, 2, floatval);
+    
+    measureSpeedChange(100);
+}
+
+boolean DriveToLocationAction::checkFinished() {
+    current_pos = getCurrentPosition();
+    
+    float target_heading = getHeadingTo(target_pos);
+    target_bearing = headingToBearing(target_heading);
+    
+    float distance = getDistance(target_pos, current_pos);
+    angle_tolerance = fabs(atan2(tolerance_rad, distance));
+    
+    //Check if we've reached the destination
+    if(distance <= tolerance_rad/3.0)
+        return true;
+    
+    //Check if we've overshot, but are close enough that it's not worth turning
+    //around to get a little bit closer.
+    if(distance <= tolerance_rad && fabs(target_bearing) > angle_tolerance)
+        return true;
+    
+    return false; //keep going
+}
+
+void DriveToLocationAction::doWork() {
+    //update the current speed if we can
+    if(doneSpeedMeasurement()) {
+        updateCurrentSpeed(getMeasuredSpeed());
+    }
+
+    //Check if we've gone too far off course. If so, stop and turn.
+    if(fabs(target_bearing) > angle_tolerance) {
+        ActionArgs turn_args, drive_args;
+        ARGS(turn_args, 0, floatval) = getHeadingTo(target_pos);
+        
+        ARGS(drive_args, 0, floatval) = target_pos.x;
+        ARGS(drive_args, 1, floatval) = target_pos.y;
+        ARGS(drive_args, 2, floatval) = tolerance_rad;
+        
+        forceNextAction(TurnInPlaceToHeadingAction::instance(), &turn_args); //kills the current action
+        setNextAction(this, &drive_args);
+    } else {
+        driveServoLeft(FULL_FWD);
+        driveServoRight(FULL_FWD);
+    }
+}
+
+void DriveToLocationAction::cleanup() {
+    driveServosNeutral();
+    updateCurrentSpeed(0); //notify tracking that we've stopped
+}
+

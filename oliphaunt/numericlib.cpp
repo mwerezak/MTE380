@@ -8,6 +8,16 @@
 
 #define MSEC_PER_SEC 1000 //number of ms in a second
 
+// Pushes a new value onto the front of an array,
+// shifting the array to the right and discarding the last element
+template<typename T>
+void pushArray(T array[], T new_val) {
+    for(int i = ABI_BUF_SIZE-1; i > 0; i--) {
+        array[i] = array[i-1]; //shift
+    }
+    array[0] = new_val;
+}
+
 /** Euler Integrator **/
 
 EulerIntegrator::EulerIntegrator() {
@@ -119,16 +129,6 @@ float AdamsBashforthIntegrator::adamsBashforthStep(unsigned long eval_timestep) 
     return last_value + update/MSEC_PER_SEC;
 }
 
-// Pushes a new value onto the front of an array,
-// shifting the array to the right and discarding the last element
-template<typename T>
-void AdamsBashforthIntegrator::pushArray(T array[], T new_val) {
-    for(int i = ABI_BUF_SIZE-1; i > 0; i--) {
-        array[i] = array[i-1]; //shift
-    }
-    array[0] = new_val;
-}
-
 //Does most of the heavy lifting
 void AdamsBashforthIntegrator::calcBetas(unsigned long eval_timestep) {
     double num, den;
@@ -188,3 +188,26 @@ void AdamsBashforthIntegrator::calcBetas(unsigned long eval_timestep) {
     printArray<double>(beta, ABI_BUF_SIZE, "beta");
     #endif
 }
+
+/** Averaging Filter **/
+
+void AveragingFilter::reset() {
+    update_count = 0;
+    for(int i = 0; i < WindowSize; i++) {
+        window[i] = 0.0;
+    }
+}
+
+void AveragingFilter::feedData(float new_val) {
+    pushArray<float>(window, new_val);
+    if(update_count < WindowSize) update_count++;
+}
+
+float AveragingFilter::getResult() {
+    float total = 0;
+    for(int i = 0; i < update_count; i++) {
+        total += window[i];
+    }
+    return total/update_count;
+}
+

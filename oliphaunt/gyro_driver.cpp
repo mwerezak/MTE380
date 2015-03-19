@@ -15,7 +15,7 @@ void initGyro() {
     
     gyro.enableDefault();
     gyro.writeReg(L3G::CTRL_REG4, 0x00); // 245 dps full scale
-    gyro.writeReg(L3G::CTRL_REG1, 0x8F); // normal power mode, all axes enabled, 400 Hz ODR, 20 Hz BW
+    gyro.writeReg(L3G::CTRL_REG1, 0x4F); // normal power mode, all axes enabled, 400 Hz ODR, 20 Hz BW
     
     delay(50);
     

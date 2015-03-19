@@ -22,11 +22,21 @@ extern char __printbuf[PRINT_BUF_SIZE];
 #define PRINTF(format, ...) (void)0
 #endif
 
-template <typename T> void printArray(T *array, int len, char *name);
+/** Geometry Helpers **/
+
+typedef struct Vector2Struct {
+    float x;
+    float y;
+} vector2;
 
 float normalizeAngle(float angle, float max_angle);
 float getShortestArc(float angle1, float angle2);
+float getDistance(vector2 p1, vector2 p2);
 
+// Prints the contents of an array
+template <typename T> void printArray(T *array, int len, char *name);
+
+// Lightweight delay timer
 class DelayTimer {
 private:
     unsigned long last_set_time, delay_time;
