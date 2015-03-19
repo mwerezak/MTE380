@@ -13,22 +13,16 @@
 #include "accmag_driver.h"
 #include "utility.h"
 
+boolean gyro_enabled, acc_enabled;
+
 AdamsBashforthIntegrator hdgIntegrator;
 EulerIntegrator pitchIntegrator;
 
-#ifdef INERTIAL_TRACKING
-AveragingFilter accXFilter;
-AveragingFilter accYFilter;
+AdamsBashforthIntegrator speedIntegrator;
+AveragingFilter speedFilter;
 
-AdamsBashforthIntegrator velXIntegrator;
-AdamsBashforthIntegrator velYIntegrator;
-
-AdamsBashforthIntegrator posXIntegrator;
-AdamsBashforthIntegrator posYIntegrator;
-#else
 EulerIntegrator posXIntegrator;
 EulerIntegrator posYIntegrator;
-#endif
 
 void initTracking() {
     //initialize sensors
@@ -38,6 +32,9 @@ void initTracking() {
     Serial.println("Initializing accelerometer...");
     initAccMag();
 
+    gyro_enabled = true;
+    acc_enabled = false;
+    
     //initialize integrators
     setCurrentHeading(0.0);
     setCurrentPitch(0.0);
@@ -47,7 +44,7 @@ void initTracking() {
 }
 
 void processTracking() {
-    if(updateGyro()) {
+    if(gyro_enabled && updateGyro()) {
         gyro_data gyro = getGyroReading();
         hdgIntegrator.feedData(gyro.GYRO_HDG_AXIS, gyro.update_time);
         pitchIntegrator.feedData(gyro.GYRO_PITCH_AXIS, gyro.update_time);
@@ -62,10 +59,7 @@ void processTracking() {
     }
     
     
-    #ifdef DBG_INS_TRACKING
-    static unsigned long last_print = 0;
-    #endif
-    if(updateAcc()) {
+    if(acc_enabled && updateAcc()) {
         acc_data acc = getAccReading();
         
         if(fabs(acc.x) <= ACC_TOLERANCE) acc.ACC_X_AXIS = 0.0;
@@ -79,30 +73,22 @@ void processTracking() {
         //posXIntegrator.feedData(velXIntegrator.getLastResult(), acc.update_time);
         //posYIntegrator.feedData(velYIntegrator.getLastResult(), acc.update_time);
         
-        #ifdef DBG_INS_TRACKING
-        if(millis() - last_print >= 100) {
-            vector2 pos = getCurrentPosition();
-            vector2 vel = getCurrentVelocity();
-            Serial.print("Pos: { ");
-            Serial.print(pos.x);
-            Serial.print(", ");
-            Serial.print(pos.y);
-            Serial.print(" }, Vel: { ");
-            Serial.print(vel.x);
-            Serial.print(", ");
-            Serial.print(vel.y);
-            Serial.print(" }, Acc: { ");
-            Serial.print(acc.ACC_X_AXIS);
-            Serial.print(", ");
-            Serial.print(acc.ACC_Y_AXIS);
-            Serial.println(" };");
-            last_print = millis();
-        }
-        #endif
     }
 }
 
 /** Gyro **/
+
+void holdGyro() {
+    gyro_enabled = false;
+}
+
+void releaseGyro() {
+    float old_hdg = hdgIntegrator.getLastResult();
+    float old_pitch = pitchIntegrator.getLastResult();
+    hdgIntegrator.reset(old_hdg);
+    pitchIntegrator.reset(old_pitch);
+    gyro_enabled = true;
+}
 
 void setCurrentHeading(float newHdg) {
     hdgIntegrator.reset(newHdg);
@@ -126,26 +112,14 @@ float getCurrentPitch() {
 void setCurrentPosition(vector2 newPos) {
     posXIntegrator.reset(newPos.x);
     posYIntegrator.reset(newPos.y);
-    
-    #ifdef INERTIAL_TRACKING
-    velXIntegrator.reset(0.0);
-    velYIntegrator.reset(0.0);
-    accXFilter.reset();
-    accYFilter.reset();
-    #endif
 }
 
 vector2 getCurrentPosition() {
-    #ifdef INERTIAL_TRACKING
     unsigned long cur_time = millis();
     vector2 pos;
     pos.x = posXIntegrator.evalResult(cur_time);
     pos.y = posYIntegrator.evalResult(cur_time);
     return pos;
-    #else
-    vector2 pos;
-    return pos;
-    #endif
 }
 
 void updateCurrentSpeed(float newspeed) {
@@ -163,20 +137,6 @@ void updateCurrentVelocity(vector2 new_vel) {
     unsigned long time = millis();
     posXIntegrator.feedData(new_vel.x, time);
     posYIntegrator.feedData(new_vel.y, time);
-}
-
-vector2 getCurrentVelocity() {
-    vector2 vel;
-    #ifdef INERTIAL_TRACKING
-    unsigned long cur_time = millis();
-    vel.x = velXIntegrator.evalResult(cur_time);
-    vel.y = velYIntegrator.evalResult(cur_time);
-    #else
-    //not supported
-    vel.x = -1;
-    vel.y = -1;
-    #endif
-    return vel;
 }
 
 /** Compass **/

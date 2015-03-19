@@ -45,10 +45,12 @@ void setCurrentPitch(float newPitch);
 float getCurrentHeading();
 float getCurrentPitch();
 
+void holdGyro();
+void releaseGyro();
+
 // Distances measured in cm
 void setCurrentPosition(vector2 newPos);
 vector2 getCurrentPosition();
-vector2 getCurrentVelocity();
 
 //** Dead Reckoning
 
