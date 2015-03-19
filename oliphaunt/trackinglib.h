@@ -28,8 +28,7 @@
 #define GYRO_HDG_AXIS x
 #define GYRO_PITCH_AXIS z
 
-#define ACC_X_AXIS z
-#define ACC_Y_AXIS y
+#define ACC_FWD_AXIS y
 
 #define ACC_TOLERANCE 15.0   //cm/s^2
 
@@ -58,6 +57,11 @@ vector2 getCurrentPosition();
 // Speed should be given in cm/s
 void updateCurrentSpeed(float newspeed);
 void updateCurrentVelocity(vector2 new_vel);
+
+// Measures speed change using the accelerometer over the specified window.
+void measureSpeedChange(unsigned long measure_time)
+float getMeasuredSpeed();
+boolean doneSpeedMeasurement();
 
 void initTracking();
 void processTracking();

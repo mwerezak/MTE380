@@ -1,6 +1,4 @@
 
-#define INERTIAL_TRACKING
-
 //#define DBG_GYRO_TRACKING
 #define DBG_INS_TRACKING
 
@@ -18,11 +16,12 @@ boolean gyro_enabled, acc_enabled;
 AdamsBashforthIntegrator hdgIntegrator;
 EulerIntegrator pitchIntegrator;
 
-AdamsBashforthIntegrator speedIntegrator;
-AveragingFilter speedFilter;
-
 EulerIntegrator posXIntegrator;
 EulerIntegrator posYIntegrator;
+
+DelayTimer speedTimer;
+AdamsBashforthIntegrator speedIntegrator;
+AveragingFilter speedFilter;
 
 void initTracking() {
     //initialize sensors
@@ -58,21 +57,24 @@ void processTracking() {
         #endif
     }
     
-    
     if(acc_enabled && updateAcc()) {
         acc_data acc = getAccReading();
+        float fwd_acc = acc.ACC_FWD_AXIS;
         
-        if(fabs(acc.x) <= ACC_TOLERANCE) acc.ACC_X_AXIS = 0.0;
-        if(fabs(acc.y) <= ACC_TOLERANCE) acc.ACC_Y_AXIS = 0.0;
+        if(fabs(fwd_acc) <= ACC_TOLERANCE) fwd_acc = 0.0;
         
-        accXFilter.feedData(acc.ACC_X_AXIS);
-        accYFilter.feedData(acc.ACC_Y_AXIS);
+        speedFilter.feedData(fwd_acc);
+        speedIntegrator.feedData(speedFilter.getResult(), acc.update_time);
         
-        velXIntegrator.feedData(accXFilter.getResult(), acc.update_time);
-        velYIntegrator.feedData(accYFilter.getResult(), acc.update_time);
-        //posXIntegrator.feedData(velXIntegrator.getLastResult(), acc.update_time);
-        //posYIntegrator.feedData(velYIntegrator.getLastResult(), acc.update_time);
-        
+        if(doneSpeedMeasurement()) {
+            acc_enabled = false;
+            
+            #ifdef DBG_INS_TRACKING
+            Serial.print("Measured speed change: ");
+            Serial.print(getMeasuredSpeed());
+            Serial.println(" cm/s.");
+            #endif
+        }
     }
 }
 
@@ -137,6 +139,22 @@ void updateCurrentVelocity(vector2 new_vel) {
     unsigned long time = millis();
     posXIntegrator.feedData(new_vel.x, time);
     posYIntegrator.feedData(new_vel.y, time);
+}
+
+// Functions for using the accelerometer to measure changes in speed
+
+void measureSpeedChange(unsigned long measure_time) {
+    speedIntegrator.reset(0);
+    speedFilter.reset();
+    speedTimer.set(measure_time);
+}
+
+float getMeasuredSpeed() {
+    return speedIntegrator.getLastResult();
+}
+
+boolean doneSpeedMeasurement() {
+    return speedTimer.expired();
 }
 
 /** Compass **/

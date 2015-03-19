@@ -17,7 +17,7 @@
 
 #define GYRO_SIGN_X -1
 #define GYRO_SIGN_Y 1
-#define GYRO_SIGN_Z 1
+#define GYRO_SIGN_Z -1
 
 typedef L3G::vector<int16_t> gyro_raw_data; //gyro raw data type
 
