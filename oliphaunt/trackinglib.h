@@ -57,7 +57,7 @@ void updateCurrentSpeed(float newspeed);
 void updateCurrentVelocity(vector2 new_vel);
 
 // Measures speed change using the accelerometer over the specified window.
-void measureSpeedChange(unsigned long measure_time)
+void measureSpeedChange(unsigned long measure_time);
 float getMeasuredSpeed();
 boolean doneSpeedMeasurement();
 
