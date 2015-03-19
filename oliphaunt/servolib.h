@@ -26,10 +26,20 @@
 #define SERVO_DRIVE_RIGHT_HALF_REV  190     //188
 
 // Panning Servo
-#define SERVO_PANNING_PIN          10
+#define SERVO_PANNING_PIN          13
 #define SERVO_PANNING_MAX          255
-#define SERVO_PANNING_MIN          0
+#define SERVO_PANNING_MIN          1
 #define SERVO_PANNING_EST_SPEED    2.833333 //ms/deg
+
+// Scoop Servo
+#define SERVO_SCOOP_PIN             10
+#define SERVO_SCOOP_MIN             30
+#define SERVO_SCOOP_MAX             180
+
+// Shovel Servo
+#define SERVO_SHOVEL_PIN             0
+#define SERVO_SHOVEL_MIN             0
+#define SERVO_SHOVEL_MAX             255
 
 //values mainly for debugging purposes
 typedef enum { 
@@ -58,7 +68,8 @@ float getPanningServoSetpoint();
 //will NOT return a valid value if called immediately after setPanningServo()
 unsigned long estimatePanningTime(float target_angle); 
 
-
+void setScoopServo(float target_angle);
+void setShovelServo(float target_angle);
 
 
 #endif
