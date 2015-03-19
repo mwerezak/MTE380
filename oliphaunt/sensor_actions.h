@@ -19,7 +19,7 @@ public:
 
 /*
     Parameters:
-    1 - ptrval (float*): A pointer to a float to write the reading.
+    0 - ptrval (float*): A pointer to a float to write the reading.
 */
 class IRDistanceReading : public SingletonAction<IRDistanceReading> {
 private:
@@ -39,8 +39,44 @@ public:
 };
 
 /*
+    Sweeps from left to right, and returns the midpoint of the first thing it finds.
+
     Parameters:
-    1 - ptrval (float*): A pointer to a float to write the reading.
+    0 - floatval - leftmost BEARING to sweep
+    1 - floatval - rightmost BEARING to sweep
+    2 - floatval - near limit
+    3 - floatval - far limit
+    4 - floatval - scan resolution, in cm
+    5 - ptrval (float*) - pointer to a float to write the BEARING
+    6 - ptrval (boolean*) - write true if something was found
+*/
+class IRSweepForTarget : public SingletonAction<IRSweepForTarget> {
+    float leftlimit, rightlimit;
+    float nearlimit, farlimit;
+    float angle_resolution;
+    float *return_ptr;
+    boolean *found_ptr;
+    
+    boolean found_left, found_right;
+    float current_angle;
+    float last_reading;
+    float target_left, target_right;
+    
+    float calcResolution(float arc_spacing);
+    void scanAngle(float angle);
+public:
+    virtual char* getName() { return "IRSweepForTarget"; }
+    virtual void setup(ActionArgs *args);
+    virtual boolean checkFinished();
+    virtual void doWork();
+    virtual void cleanup();
+};
+
+
+
+/*
+    Parameters:
+    0 - ptrval (float*): A pointer to a float to write the reading.
 */
 class UltraSoundReading : public SingletonAction<UltraSoundReading> {
 private:

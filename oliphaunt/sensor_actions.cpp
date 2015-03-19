@@ -4,6 +4,7 @@
 #include "servolib.h"
 #include "sensorlib.h"
 #include "action.h"
+#include "actionqueue.h"
 #include "utility.h"
 
 /** PanIRServo **/
@@ -49,6 +50,98 @@ void IRDistanceReading::cleanup() {
     }
     *return_ptr = total/NumReadings;
 }
+
+/** IRSweepForTarget **/
+
+void IRSweepForTarget::setup(ActionArgs *args) {
+    leftlimit   = ARGSP(args, 0, floatval);
+    rightlimit  = ARGSP(args, 1, floatval);
+    nearlimit   = ARGSP(args, 2, floatval);
+    farlimit    = ARGSP(args, 3, floatval);
+    float resolution = ARGSP(args, 4, floatval);
+    
+    return_ptr  = (float*)      ARGSP(args, 5, ptrval);
+    found_ptr   = (boolean*)    ARGSP(args, 6, ptrval);
+    
+    angle_resolution = calcResolution(resolution);
+    
+    target_left = leftlimit;
+    target_right = leftlimit;
+    found_left = false;
+    found_right = false;
+    
+    current_angle = leftlimit; //start at the leftmost limit
+    scanAngle(current_angle);
+}
+
+float IRSweepForTarget::calcResolution(float arc_spacing) {
+    float avg_rad = (farlimit + nearlimit)/2.0;
+    float num_scan = avg_rad/arc_spacing;
+    return fabs(rightlimit - leftlimit)/num_scan;
+}
+
+//pans the IR sensor to an angle and scans it, writing to last_reading
+void IRSweepForTarget::scanAngle(float angle) {
+    ActionArgs pan_args;
+    ARGS(pan_args, 0, floatval) = angle;
+    
+    ActionArgs ir_args;
+    ARGS(ir_args, 0, ptrval) = &last_reading;
+    
+    suspendCurrentAction();
+    
+    //pan to the angle, take a measurement, then resume
+    setNextAction(this, NULL);
+    setNextAction(IRDistanceReading::instance(), &ir_args);
+    setNextAction(PanIRServo::instance(), &pan_args);
+}
+
+boolean IRSweepForTarget::checkFinished() {
+    //found both corners
+    if(found_left && found_right) {
+        *found_ptr = true;
+        *return_ptr = (target_right - target_left)/2.0;
+        return true;
+    }
+    
+    if(current_angle > rightlimit) {
+        //found one corner but not the other
+        if(found_left) {
+            *found_ptr = true;
+            *return_ptr = target_left;
+        }
+        else {
+            *found_ptr = false;
+        }
+        return true;
+    }
+    
+    return false;
+}
+
+void IRSweepForTarget::doWork() {
+    //check if the reading is in the search range
+    if(farlimit > last_reading && last_reading > nearlimit) {
+        if(!found_left) {
+            //found the left corner
+            found_left = true;
+            target_left = current_angle;
+        }
+    }
+    else {
+        if(found_left && !found_right) {
+            //found the right corner
+            found_right = true;
+            target_right = current_angle;
+        }
+    }
+    
+    //scan the next angle
+    current_angle += angle_resolution;
+    scanAngle(current_angle);
+}
+
+void IRSweepForTarget::cleanup() {}
 
 /** UltraSoundReading **/
 
