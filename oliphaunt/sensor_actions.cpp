@@ -27,6 +27,7 @@ void IRDistanceReading::setup(ActionArgs *args) {
     return_ptr = (float*) ARGSP(args, 0, ptrval);
     
     reading_count = 0;
+    enableDistanceIR();
     ir_refresh.set(DISTIR_REFRESH_TIME);
 }
 
@@ -43,6 +44,8 @@ void IRDistanceReading::doWork() {
 }
 
 void IRDistanceReading::cleanup() {
+    disableDistanceIR();
+
     //calculate the average and write it to return_ptr
     float total = 0;
     for(int i = 0; i < NumReadings; i++) {
@@ -124,14 +127,14 @@ void IRSweepForTarget::doWork() {
     if(farlimit > last_reading && last_reading > nearlimit) {
         if(!found_left) {
             //found the left corner
-            found_left = true;
+            //found_left = true;
             target_left = current_angle;
         }
     }
     else {
         if(found_left && !found_right) {
             //found the right corner
-            found_right = true;
+            //found_right = true;
             target_right = current_angle;
         }
     }

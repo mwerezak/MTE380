@@ -4,7 +4,7 @@
 #define SERVO_DRIVE_DEADTIME        200 //ms
 
 // M1 - LEFT
-#define SERVO_DRIVE_LEFT_PIN        11
+#define SERVO_DRIVE_LEFT_PIN        12
 #define SERVO_DRIVE_LEFT_NEUTRAL    0
 #define SERVO_DRIVE_LEFT_STOP       180
 
@@ -15,7 +15,7 @@
 #define SERVO_DRIVE_LEFT_HALF_REV   176
 
 // M2 - RIGHT
-#define SERVO_DRIVE_RIGHT_PIN       12
+#define SERVO_DRIVE_RIGHT_PIN       13
 #define SERVO_DRIVE_RIGHT_NEUTRAL   0
 #define SERVO_DRIVE_RIGHT_STOP      180
 
@@ -26,10 +26,24 @@
 #define SERVO_DRIVE_RIGHT_HALF_REV  190     //188
 
 // Panning Servo
-#define SERVO_PANNING_PIN          10
+#define SERVO_PANNING_PIN          9
 #define SERVO_PANNING_MAX          255
-#define SERVO_PANNING_MIN          0
+#define SERVO_PANNING_MIN          10
 #define SERVO_PANNING_EST_SPEED    2.833333 //ms/deg
+#define SERVO_PANNING_MIN_ANGLE    -83
+#define SERVO_PANNING_MAX_ANGLE    +90
+
+// Scoop Servo
+#define SERVO_SCOOP_PIN             11
+#define SERVO_SCOOP_MIN             50
+#define SERVO_SCOOP_MAX             245
+#define SERVO_SCOOP_MIN_ANGLE       0
+#define SERVO_SCOOP_MAX_ANGLE       180
+
+// Shovel Servo
+#define SERVO_SHOVEL_PIN             10
+#define SERVO_SHOVEL_MIN             0
+#define SERVO_SHOVEL_MAX             255
 
 //values mainly for debugging purposes
 typedef enum { 
@@ -58,7 +72,8 @@ float getPanningServoSetpoint();
 //will NOT return a valid value if called immediately after setPanningServo()
 unsigned long estimatePanningTime(float target_angle); 
 
-
+void setScoopServo(float target_angle);
+void setShovelServo(float target_angle);
 
 
 #endif

@@ -1,4 +1,8 @@
-//#define DBG_DRIVE_SERVOS
+
+#define DBG_DRIVE_SERVOS
+
+#define DBG_PANNING_SERVO
+#define DBG_CAPTURE_SERVOS
 
 #include "servolib.h"
 
@@ -22,6 +26,10 @@ void initDriveServos() {
 
     update_left = false;
     update_right = false;
+    
+    driveServosNeutral();
+    setPanningServo(SERVO_PANNING_MAX_ANGLE);
+    setScoopServo(SERVO_SCOOP_MAX_ANGLE);
 }
 
 void processDriveServos() {
@@ -120,10 +128,18 @@ void _setDriveServoRight(DriveCmd setting) {
 static float panning_setpoint;
 
 void setPanningServo(float angle) {
-    float fcmd = LINSCALE(angle, -90, +90, SERVO_PANNING_MIN, SERVO_PANNING_MAX);
+    angle = constrain(angle, SERVO_PANNING_MIN_ANGLE, SERVO_PANNING_MAX_ANGLE);
+    float fcmd = LINSCALE(angle, SERVO_PANNING_MIN_ANGLE, SERVO_PANNING_MAX_ANGLE, SERVO_PANNING_MIN, SERVO_PANNING_MAX);
     byte cmd = (byte) round(fcmd);
     analogWrite(SERVO_PANNING_PIN, cmd);
     panning_setpoint = angle;
+    
+    #ifdef DBG_PANNING_SERVO
+    Serial.print("PANNING> ");
+    Serial.print(angle);
+    Serial.print("o V=");
+    Serial.println(cmd);    
+    #endif
 }
 
 float getPanningServoSetpoint() {
@@ -133,4 +149,33 @@ float getPanningServoSetpoint() {
 unsigned long estimatePanningTime(float target_angle) {
     float arc = getShortestArc(panning_setpoint, target_angle);
     return (unsigned long) ceil(arc*SERVO_PANNING_EST_SPEED);
+}
+
+/** Scoop and Shovel Servos **/
+
+void setScoopServo(float target_angle) {
+    target_angle = constrain(target_angle, SERVO_SCOOP_MIN_ANGLE, SERVO_SCOOP_MAX_ANGLE);
+    float fcmd = LINSCALE(target_angle, SERVO_SCOOP_MIN_ANGLE, SERVO_SCOOP_MAX_ANGLE, SERVO_SCOOP_MIN, SERVO_SCOOP_MAX);
+    byte cmd = (byte) round(fcmd);
+    analogWrite(SERVO_SCOOP_PIN, cmd);
+    
+    #ifdef DBG_CAPTURE_SERVOS
+    Serial.print("SCOOP> ");
+    Serial.print(target_angle);
+    Serial.print("o V=");
+    Serial.println(cmd);    
+    #endif
+}
+
+void setShovelServo(float target_angle) {
+    float fcmd = LINSCALE(target_angle, 0, 180, SERVO_SHOVEL_MIN, SERVO_SHOVEL_MAX);
+    byte cmd = (byte) round(fcmd);
+    analogWrite(SERVO_SHOVEL_PIN, cmd);
+    
+    #ifdef DBG_CAPTURE_SERVOS
+    Serial.print("SHOVEL> ");
+    Serial.print(target_angle);
+    Serial.print("o V=");
+    Serial.println(cmd);    
+    #endif
 }
