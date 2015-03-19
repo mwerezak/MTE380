@@ -45,6 +45,12 @@ void setup() {
 	float f;
 	boolean b;
 	
+	Serial.println("Initializing action queue...");
+	initQueue();
+	
+	float f;
+	boolean b;
+	
 	ActionArgs args;
 	ARGS(args, 0, floatval) = 0.0;
 	queueAction(PanIRServo::instance(), &args);
@@ -86,6 +92,7 @@ void setup() {
 	
 	/*
 	ActionArgs args;
+
 	ARGS(args, 0, floatval) = 0;
 	queueAction(PanScoopServo::instance(), &args);
 	
