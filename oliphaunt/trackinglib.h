@@ -28,8 +28,9 @@
 #define GYRO_HDG_AXIS x
 #define GYRO_PITCH_AXIS z
 
-#define ACC_Y_AXIS y
-#define ACC_X_AXIS z
+#define ACC_FWD_AXIS y
+
+#define ACC_TOLERANCE 15.0   //cm/s^2
 
 #include "utility.h"
 
@@ -41,10 +42,12 @@ void setCurrentPitch(float newPitch);
 float getCurrentHeading();
 float getCurrentPitch();
 
+void holdGyro();
+void releaseGyro();
+
 // Distances measured in cm
 void setCurrentPosition(vector2 newPos);
 vector2 getCurrentPosition();
-vector2 getCurrentVelocity();
 
 //** Dead Reckoning
 
@@ -52,6 +55,11 @@ vector2 getCurrentVelocity();
 // Speed should be given in cm/s
 void updateCurrentSpeed(float newspeed);
 void updateCurrentVelocity(vector2 new_vel);
+
+// Measures speed change using the accelerometer over the specified window.
+void measureSpeedChange(unsigned long measure_time)
+float getMeasuredSpeed();
+boolean doneSpeedMeasurement();
 
 void initTracking();
 void processTracking();
