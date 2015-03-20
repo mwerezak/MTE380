@@ -32,6 +32,7 @@ typedef struct Vector2Struct {
 float normalizeAngle(float angle, float max_angle);
 float getShortestArc(float angle1, float angle2);
 float getDistance(vector2 p1, vector2 p2);
+vector2 getAbsoluteDisplacement(vector2 p1, float distance, float angle);
 
 // Prints the contents of an array
 template <typename T> void printArray(T *array, int len, char *name);

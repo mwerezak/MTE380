@@ -1,10 +1,15 @@
 #include "utility.h"
+#include "trackinglib.h"
 
 #include <Arduino.h>
 #include <math.h>
 
 #ifdef DBG_PRINT
 char __printbuf[PRINT_BUF_SIZE];
+#endif
+
+#ifndef PI
+    #define PI 3.141592
 #endif
 
 template <typename T>
@@ -37,6 +42,15 @@ float getDistance(vector2 p1, vector2 p2) {
     float dx = p1.x - p2.x;
     float dy = p1.y - p2.y;
     return hypot(dx, dy);
+}
+
+vector2 getAbsoluteDisplacement(float distance, float angle) {
+    vector2 current_location = getCurrentPosition();
+    float angle_abs = angle + getCurrentHeading();
+    float x2 = distance*sin(angle_abs*2*PI/360.0);
+    float y2 = distance*cos(angle_abs*2*PI/360.0);
+    vector2 retVal = {current_location.x + x2, current_location.y + y2};
+    return retVal;
 }
 
 /** Delay Timer **/

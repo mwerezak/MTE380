@@ -6,6 +6,94 @@
 #include "action.h"
 #include "actionqueue.h"
 #include "utility.h"
+#include "trackinglib.h"
+
+/** ReachBase **/
+
+void ReachBase::setup(ActionArgs *args) {
+    ActionArgs args;
+    base_found = false;
+    x_base = 0;
+    y_base = 0;
+    float measure;
+    float * measure_ptr = &measure;
+
+    // first check base isn't infront
+    ARGS(args, 0, floatval *) = measure_ptr;
+    queueAction(UltraSoundReading::instance, &args);
+    if ((*measure_ptr) < TRACK_LENGHT_RAMP ) {
+        //drive forward till within 50
+        
+        // Find Target
+    }
+
+    // might skip
+    ARGS(args, 0, floatval) = 270; //86.5
+    queueAction(TurnInPlaceToHeadingAction::instance(), &args);
+
+    ARGS(args, 1, floatval *) = measure_ptr;
+    queueAction(UltraSoundReading::instance, &args);
+    if ((*measure_ptr) < TRACK_WIDTH ) {
+        //drive forward till within 50
+        
+        // Find Target
+    }
+}
+
+void ReachBase::doWork() {
+    ActionArgs args;
+    float dist, angle;
+    float * dist_ptr = &d_2_base;
+    float * angle_ptr = &a_2_base;
+    boolean * found_ret = base_found;
+    // Find target
+    ARGS(args, 0, boolval) = found_ret;
+    ARGS(args, 0, floatval *) = dist_ptr;
+    ARGS(args, 0, floatval *) = angle_ptr;
+    queueAction(FindTarget::instance, &args);
+    
+    if (!base_found) {
+        vector2 move_to = getAbsoluteDisplacement(ADVANCE_INCR, 0);
+        ARGS(args, 0, floatval) = move_to.x;
+        ARGS(args, 1, floatval) = move_to.y;
+        ARGS(args, 2, floatval) = BASE_ACCU;
+        queueAction(DriveToLocationAction::instance, &args);
+    }
+}
+
+boolean ReachBase::checkFinished() { 
+    return base_found;
+}
+
+void ReachBase::cleanup() {
+    // Go to the base
+    vector2 move_to = getAbsoluteDisplacement(d_2_base, a_2_base);
+    ARGS(args, 0, floatval) = move_to.x;
+    ARGS(args, 1, floatval) = move_to.y;
+    ARGS(args, 2, floatval) = BASE_ACCU;
+    queueAction(DriveToLocationAction::instance, &args);
+
+    // mount base... maybe
+}
+
+/** FindTarget **/
+
+void FindTarget::setup(ActionArgs *args) {
+    
+
+}
+
+void FindTarget::doWork() {
+
+}
+
+void FindTarget::checkFinished() {
+
+}
+
+void FindTarget::cleanup() {
+
+}
 
 /** PanIRServo **/
 

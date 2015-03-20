@@ -30,10 +30,28 @@ void disableDistanceIR() {
 }
 
 // Returns a distance in cm
-double getDistanceIRReading() {
-    long vsense = analogRead(DISTIR_DATA_PIN);
-    return exp((1.0/(vsense * 5.0/1024.0)+1.723)/0.909);
-}
+float readDistanceIR(){
+    
+    int val1, val2, val3;
+    delayMicroseconds(22);
+    val1 = analogRead(SENSOR_IR_LR_PIN);
+    val1 = (float)exp((1/(val1 * 5.0/1024.0)+1.723)/0.909);
+    delay(22);
+    val2 = analogRead(SENSOR_IR_LR_PIN);
+    val2 = (float)exp((1/(val2 * 5.0/1024.0)+1.723)/0.909);
+    if (fabs(val1-val2) > 2) {
+        delay(22);
+        val3 = analogRead(SENSOR_IR_LR_PIN);
+        val3 = (float)exp((1/(val3 * 5.0/1024.0)+1.723)/0.909);
+        if (fabs(val1-val3) < 2) {
+            return (val1 + val3) / 2.0;
+        } else if (fabs(val2-val3) < 2) {
+            return (val2 + val3) / 2.0;
+        } else {
+            return (val1 + val2 + val3)/ 3.0;
+        }
+    }
+    return (val1 - val2)/ 2.0;
 
 
 // Returns a distance in cm

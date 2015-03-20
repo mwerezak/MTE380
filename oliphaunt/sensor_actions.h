@@ -19,6 +19,36 @@ public:
 
 /*
     Parameters:
+    0 - bool: is_lego_base? (true == lego, false == home)
+*/
+class ReachBase : public SingletonAction<FindBase> {
+private:
+    boolean base_found;
+    float d_2_base, a_2_base;
+    const float TRACK_WIDTH = 280.0;
+    const float TRACK_LENGHT_RAMP = 150.0;
+    const float BASE_ACCU = 20.0;
+    const float ADVANCE_INCR = 50.0;
+public:
+    virtual char* getName() { return "ReachBase"; }
+    virtual void setup(ActionArgs *args);
+    virtual boolean checkFinished();
+};
+
+/*
+    Parameters:
+    0 - dist_ptr (float *): Ptr to relative dist to write
+    1 - angle_ptr (float *): Ptr to relative angle to write
+*/
+class FindTarget : public SingletonAction<FindBase> {
+public:
+    virtual char* getName() { return "FindTarget"; }
+    virtual void setup(ActionArgs *args);
+    virtual boolean checkFinished();
+};
+
+/*
+    Parameters:
     0 - ptrval (float*): A pointer to a float to write the reading.
 */
 class IRDistanceReading : public SingletonAction<IRDistanceReading> {
