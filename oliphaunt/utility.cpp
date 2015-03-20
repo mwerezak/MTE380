@@ -47,8 +47,8 @@ float getDistance(vector2 p1, vector2 p2) {
 vector2 getAbsoluteDisplacement(float distance, float angle) {
     vector2 current_location = getCurrentPosition();
     float angle_abs = angle + getCurrentHeading();
-    float x2 = distance*sin(angle_abs*2*PI/360.0);
-    float y2 = distance*cos(angle_abs*2*PI/360.0);
+    float x2 = distance*sin(TORAD(angle_abs));
+    float y2 = distance*cos(TORAD(angle_abs));
     vector2 retVal = {current_location.x + x2, current_location.y + y2};
     return retVal;
 }

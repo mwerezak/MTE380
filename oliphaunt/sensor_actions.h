@@ -17,13 +17,33 @@ public:
     virtual boolean checkFinished();
 };
 
+
+/*
+    Parameters:
+    none!
+*/
+class SweepForBase : public SingletonAction<SweepForBase> {
+private:
+    float scan_angle, last_reading;
+    int counter;
+public:
+    virtual char* getName() { return "SweepForBase"; }
+    virtual void setup(ActionArgs *args);
+    virtual boolean checkFinished();
+    virtual void cleanup();
+}
+
+
 /*
     Parameters:
     0 - bool: is_lego_base? (true == lego, false == home)
+    1 - bool: is_resume? (true == skip initial)
+    2 - bool: is_straight (if base beside goes straight at it)
 */
 class ReachBase : public SingletonAction<FindBase> {
 private:
-    boolean base_found;
+    int base_found;
+    boolean is_lego_base;
     float d_2_base, a_2_base;
     const float TRACK_WIDTH = 280.0;
     const float TRACK_LENGHT_RAMP = 150.0;
@@ -37,10 +57,13 @@ public:
 
 /*
     Parameters:
-    0 - dist_ptr (float *): Ptr to relative dist to write
-    1 - angle_ptr (float *): Ptr to relative angle to write
+    0 - found_ret (boolean): Ptr to success or fail to write
+    1 - dist_ptr (float *): Ptr to relative dist to write
+    2 - angle_ptr (float *): Ptr to relative angle to write
 */
 class FindTarget : public SingletonAction<FindBase> {
+private:
+    const float
 public:
     virtual char* getName() { return "FindTarget"; }
     virtual void setup(ActionArgs *args);

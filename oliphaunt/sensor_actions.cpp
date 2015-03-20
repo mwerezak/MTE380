@@ -8,6 +8,90 @@
 #include "utility.h"
 #include "trackinglib.h"
 
+//gets a distance reading at a certain angle with the distance IR.
+void irScanAngle(float angle, float *result) {
+    ActionArgs pan_args, scan_args;
+    ARGS(pan_args, 0, floatval) = angle;
+    ARGS(scan_args, 0, ptrval) = result;
+    
+    setNextAction(IRDistanceReading::instance(), &scan_args);
+    setNextAction(PanIRServo::instance(), &pan_args);
+}
+
+
+void postRampCheck () {
+    float reading = readUltraSound();
+    if(reading <= TRACK_LENGHT_RAMP) {
+        vector2 pos = getCurrentPosition();
+        pos.y += reading;
+
+        ActionArgs args;
+        ARGS(args, 0, floatval) = pos.x;
+        ARGS(args, 1, floatval) = pos.y;
+        ARGS(args, 2, floatval) = 10;
+        setNextAction(DriveToLocationAction::instance(), &args);
+    }
+    else {
+        ActionArgs sweep_args;
+        //set sweep args
+        //queue sweep
+
+        ActionArgs turn_args;
+        ARGS(turn_args, 0, floatval) = 270;
+        setNextAction(TurnInPlaceToHeadingAction::instance(), &turn_args);
+    }
+}
+
+
+/** SweepForBase **/
+
+void SweepForBase::setup(ActionArgs *args) {
+    scan_angle = -50.0;
+    counter = 0;
+    
+    irScanAngle(scan_angle, &last_reading);
+    suspendCurrentAction();
+}
+
+boolean SweepForBase::checkFinished() {
+    if(scan_angle >= 50.0) { 
+        //if we don't find anything, do stuff here.
+        return true;
+    }
+    return false;
+} 
+
+void SweepForBase::doWork() {
+    if(last_reading <= 140) {
+        counter++;
+    }
+    else if(counter > 0) {
+        counter--;
+    }
+
+
+    if(counter > 5) {
+        //found it, go there
+        vector2 target = getAbsoluteDisplacement(last_reading, scan_angle);
+
+        ActionArgs args;
+        ARGS(args, 0, floatval) = target.x;
+        ARGS(args, 1, floatval) = target.y;
+        ARGS(args, 2, floatval) = 10;
+        setNextAction(DriveToLocationAction::instance(), &args);
+        
+
+        killCurrentAction();
+        return;
+    }
+
+    scan_angle += 1.0;
+    irScanAngle(scan_angle, &last_reading);
+    suspendCurrentAction();
+}
+
+void SweepForBase::cleanup() {}
+
 /** ReachBase **/
 
 void ReachBase::setup(ActionArgs *args) {
@@ -18,47 +102,75 @@ void ReachBase::setup(ActionArgs *args) {
     float measure;
     float * measure_ptr = &measure;
 
-    // first check base isn't infront
-    ARGS(args, 0, floatval *) = measure_ptr;
-    queueAction(UltraSoundReading::instance, &args);
-    if ((*measure_ptr) < TRACK_LENGHT_RAMP ) {
-        //drive forward till within 50
-        
-        // Find Target
-    }
+    is_lego_base = ARGSP(args, 0, boolval);
+    // is_resume = ARGSP(args, 1, boolval);
+    // is_straight = ARGSP(args, 2, boolval);
 
-    // might skip
-    ARGS(args, 0, floatval) = 270; //86.5
-    queueAction(TurnInPlaceToHeadingAction::instance(), &args);
-
-    ARGS(args, 1, floatval *) = measure_ptr;
-    queueAction(UltraSoundReading::instance, &args);
-    if ((*measure_ptr) < TRACK_WIDTH ) {
-        //drive forward till within 50
+    // if (!is_resume) {
+    //     suspendCurrentAction();
+    //     setNextAction(this, NULL);
+    //     // first check base isn't infront
+    //     ARGS(args, 0, floatval *) = measure_ptr;
+    //     setNextAction(UltraSoundReading::instance, &args);
         
-        // Find Target
-    }
+    // }
+
+    // if (!is_resume && (*measure_ptr) < TRACK_LENGHT_RAMP and !is_straight) {
+    //     is_straight = true;
+    //     suspendCurrentAction();
+    //     setNextAction(this, NULL);
+    //     //drive forward till within 50
+            
+    //     // Find Target
+
+    //     // Drive to
+    // }
+
+    // // if (is_resume) {
+    // //     suspendCurrentAction();
+    // //     setNextAction(this, NULL);
+
+    // //     ARGS(args, 1, floatval *) = measure_ptr;
+    // //     setNextAction(UltraSoundReading::instance, &args);
+
+    // //     // might skip
+    // //     ARGS(args, 0, floatval) = 270; //86.5
+    // //     setNextAction(TurnInPlaceToHeadingAction::instance(), &args);
+
+    // //     if ((*measure_ptr) < TRACK_WIDTH ) {
+    // //         //drive forward till within 50
+            
+    // //         // Find Target
+
+    //         // Drive to
+    //     }
+    // }
 }
 
 void ReachBase::doWork() {
+    
     ActionArgs args;
     float dist, angle;
     float * dist_ptr = &d_2_base;
     float * angle_ptr = &a_2_base;
-    boolean * found_ret = base_found;
-    // Find target
-    ARGS(args, 0, boolval) = found_ret;
-    ARGS(args, 0, floatval *) = dist_ptr;
-    ARGS(args, 0, floatval *) = angle_ptr;
-    queueAction(FindTarget::instance, &args);
-    
+    int * found_ret = base_found;
+
+    suspendCurrentAction();
+    setNextAction(this, NULL);
+
     if (!base_found) {
         vector2 move_to = getAbsoluteDisplacement(ADVANCE_INCR, 0);
         ARGS(args, 0, floatval) = move_to.x;
         ARGS(args, 1, floatval) = move_to.y;
         ARGS(args, 2, floatval) = BASE_ACCU;
-        queueAction(DriveToLocationAction::instance, &args);
+        setNextAction(DriveToLocationAction::instance, &args);
     }
+
+    // Find target
+    ARGS(args, 0, boolval) = found_ret;
+    ARGS(args, 1, floatval *) = dist_ptr;
+    ARGS(args, 2, floatval *) = angle_ptr;
+    setNextAction(FindTarget::instance, &args);
 }
 
 boolean ReachBase::checkFinished() { 
@@ -71,7 +183,7 @@ void ReachBase::cleanup() {
     ARGS(args, 0, floatval) = move_to.x;
     ARGS(args, 1, floatval) = move_to.y;
     ARGS(args, 2, floatval) = BASE_ACCU;
-    queueAction(DriveToLocationAction::instance, &args);
+    setNextAction(DriveToLocationAction::instance, &args);
 
     // mount base... maybe
 }
@@ -79,7 +191,8 @@ void ReachBase::cleanup() {
 /** FindTarget **/
 
 void FindTarget::setup(ActionArgs *args) {
-    
+
+    (PanIRServo::instance(), &pan_args);
 
 }
 
