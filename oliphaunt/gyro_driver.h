@@ -11,9 +11,10 @@
 
 // L3G4200D gyro: 245 dps full scale
 // 8.75 mdps/digit; 1 dps = 0.00875
-#define GYRO_GAIN_X 0.00875
-#define GYRO_GAIN_Y 0.00875
-#define GYRO_GAIN_Z 0.00875
+#define GYRO_GAIN_SCALING 1.061111111111  //22 deg overturn
+#define GYRO_GAIN_X 0.00875*GYRO_GAIN_SCALING
+#define GYRO_GAIN_Y 0.00875*GYRO_GAIN_SCALING
+#define GYRO_GAIN_Z 0.00875*GYRO_GAIN_SCALING
 
 #define GYRO_SIGN_X 1
 #define GYRO_SIGN_Y 1

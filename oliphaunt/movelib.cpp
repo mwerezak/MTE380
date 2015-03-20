@@ -1,3 +1,5 @@
+#define DBG_MOVE_CONTROL
+
 #include "movelib.h"
 
 #include <math.h>
@@ -13,7 +15,6 @@ void TurnInPlaceToHeadingAction::setup(ActionArgs *args) {
     targetBearing = headingToBearing(targetHeading);
     
     driveServosStop();
-    //releaseGyro();
 }
 
 boolean TurnInPlaceToHeadingAction::checkFinished() {
@@ -53,8 +54,6 @@ void DriveToLocationAction::setup(ActionArgs *args) {
     target_pos.y = ARGSP(args, 1, floatval);
     tolerance_rad = ARGSP(args, 2, floatval);
     
-    //releaseGyro();
-    updateCurrentSpeed(25.1);
 }
 
 boolean DriveToLocationAction::checkFinished() {;
@@ -62,9 +61,11 @@ boolean DriveToLocationAction::checkFinished() {;
     current_pos = getCurrentPosition();
     float target_heading = getHeadingTo(target_pos);
     target_bearing = headingToBearing(target_heading);
+    
     float distance = getDistance(target_pos, current_pos);
     angle_tolerance = fabs(atan2(tolerance_rad, distance));
     
+    #ifdef DBG_MOVE_CONTROL
     Serial.print("Pos: { ");
     Serial.print(current_pos.x);
     Serial.print(", ");
@@ -81,6 +82,7 @@ boolean DriveToLocationAction::checkFinished() {;
     Serial.print(distance);
     Serial.print(", EPS: ");
     Serial.println(angle_tolerance);
+    #endif
     
     //Check if we've reached the destination
     if(distance <= tolerance_rad/3.0)
@@ -104,6 +106,7 @@ void DriveToLocationAction::doWork() {
         ARGS(drive_args, 1, floatval) = target_pos.y;
         ARGS(drive_args, 2, floatval) = tolerance_rad;
         
+        driveServosNeutral();
         updateCurrentSpeed(0);
         forceNextAction(TurnInPlaceToHeadingAction::instance(), &turn_args); //kills the current action
         setNextAction(this, &drive_args);
@@ -137,10 +140,12 @@ void TestDriveAction::doWork() {
     updateCurrentSpeed(FWD_FULL_SPEED);
     vector2 pos = getCurrentPosition();
     
+    #ifdef DBG_MOVE_CONTROL
     Serial.print("Pos: ");
     Serial.print(pos.x);
     Serial.print(", ");
     Serial.println(pos.y);
+    #endif
 }
 
 void TestDriveAction::cleanup() {
@@ -156,7 +161,7 @@ void TestDriveAction::cleanup() {
 
 void DriveForwardsAction::setup(ActionArgs *args) {
     float distance = ARGSP(args, 0, floatval);
-    timer.set(distance/FWD_FULL_SPEED);
+    timer.set(distance/FWD_FULL_SPEED*1000);
     
     driveServoLeft(FULL_FWD);
     driveServoRight(FULL_FWD);
@@ -183,28 +188,45 @@ void DumbDriveToLocationAction::setup(ActionArgs *args) {
     tolerance_radius = ARGSP(args, 2, floatval);
 }
 
-boolean DumbDriveToLocationAction::checkFinished() {;
+boolean DumbDriveToLocationAction::checkFinished() {
 
     //see if we're close enough
     vector2 current_pos = getCurrentPosition();
     float distance = getDistance(target_pos, current_pos);
-    
+
     if(distance <= tolerance_radius) {
         return true; //done!
     }
     
     //okay, figure out how to get there
-    float heading_to_target = getHeadingTo(target_pos);
-    
     ActionArgs turn_args, drive_args;
-    ARGS(turn_args, 0, floatval) = heading_to_target;
+    ARGS(turn_args, 0, floatval) = getHeadingTo(target_pos);
     ARGS(drive_args, 0, floatval) = distance;
+
+    #ifdef DBG_MOVE_CONTROL
+    Serial.print("TGT: { ");
+    Serial.print(target_pos.x);
+    Serial.print(", ");
+    Serial.print(target_pos.y);
+    Serial.print(" }, ");
+    Serial.print("DIST: ");
+    Serial.print(distance);
+    Serial.print(", HTT: ");
+    Serial.print(ARGS(turn_args, 0, floatval));
+    Serial.print(", BTT: ");
+    Serial.println(headingToBearing(ARGS(turn_args, 0, floatval)));
+    #endif
     
-    //suspend ourselves, then add turn then drive to the front of the queue
+    //suspend ourselves, then put turn then drive at the front of the queue
     suspendCurrentAction();
+
     setNextAction(this, NULL);
     setNextAction(DriveForwardsAction::instance(), &drive_args);
-    setNextAction(TurnInPlaceToHeadingAction::instance(), &turn_args);
+    forceNextAction(TurnInPlaceToHeadingAction::instance(), &turn_args);
     
     return false;
 }
+
+void DumbDriveToLocationAction::doWork() {}
+
+void DumbDriveToLocationAction::cleanup() {}
