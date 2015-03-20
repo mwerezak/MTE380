@@ -80,11 +80,26 @@ bool startDistanceIR(){
  */
 float readDistanceIR(){
     
-    int val;
+    int val1, val2, val3;
     delayMicroseconds(22);
-    val = analogRead(SENSOR_IR_LR_PIN);
-    delay(20);
-    return (float)exp((1/(val * 5.0/1024.0)+1.723)/0.909);
+    val1 = analogRead(SENSOR_IR_LR_PIN);
+    val1 = (float)exp((1/(val1 * 5.0/1024.0)+1.723)/0.909);
+    delay(22);
+    val2 = analogRead(SENSOR_IR_LR_PIN);
+    val2 = (float)exp((1/(val2 * 5.0/1024.0)+1.723)/0.909);
+    if (fabs(val1-val2) > 2) {
+        delay(22);
+        val3 = analogRead(SENSOR_IR_LR_PIN);
+        val3 = (float)exp((1/(val3 * 5.0/1024.0)+1.723)/0.909);
+        if (fabs(val1-val3) < 2) {
+            return (val1 + val3) / 2.0;
+        } else if (fabs(val2-val3) < 2) {
+            return (val2 + val3) / 2.0;
+        } else {
+            return (val1 + val2 + val3)/ 3.0;
+        }
+    }
+    return (val1 - val2)/ 2.0;
 
 }//end readIRF
 

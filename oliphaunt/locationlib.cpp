@@ -8,17 +8,18 @@ void polar2coor(float r, float a, float * x, float * y) {
     *y=r*cos(a);
 }
 
-void panServo(int){}
+// These will be actions
+// void panServo(int){}
 
-boolean pan_IR(int angle_0, int angle_1, int angle_inc, int read_per) {
-    if (!startDistanceIR && angle_inc > 0 ) {
-        return false
-    }
-    for (int i=angle_0; i<=angle_1; i+=angle_inc) {
-        panServo(i);
-        readDistanceIR
-    }
-}
+// boolean pan_IR(int angle_0, int angle_1, int angle_inc, int read_per) {
+//     if (!startDistanceIR && angle_inc > 0 ) {
+//         return false
+//     }
+//     for (int i=angle_0; i<=angle_1; i+=angle_inc) {
+//         panServo(i);
+//         PAN_BUFFER[i] = readDistanceIR()
+//     }
+// }
 
 void initRegressionData(RegressionData *data) {
     data->points = 0;
