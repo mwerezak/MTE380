@@ -7,14 +7,13 @@
 #include "movelib.h"
 #include "trackinglib.h"
 #include "sensorlib.h"
-
-#include "action.h"
+#include "servolib.h"
 
 //#define PROCESS_DELAY 1000 //miliseconds
 
 //ActionManager actionManager;
 
-#include "servolib.h"
+#include "action.h"
 #include "sensor_actions.h"
 #include "utility.h"
 #include "capture.h"
@@ -30,7 +29,6 @@ void setup() {
 	
 	Serial.println("Initializing tracking...");
 	initTracking();
-	//releaseGyro();
 	
 	Serial.println("Initializing servo drivers...");
 	initDriveServos();
@@ -69,47 +67,45 @@ void setup() {
 	queueAction(IRSweepForTarget::instance(), &args);
 	*/
 	
-	
 	/*
 	ActionArgs args;
 	
-	ARGS(args, 0, floatval) = 45;
-	queueAction(TurnInPlaceToHeadingAction::instance(), &args);
+	float angles[] = {60, 120, 60, 0, -60, -120, -60, 0, 60, 120, 60, 0};
+	for(int i = 0; i < 12; i++) {
+		ARGS(args, 0, floatval) = angles[i];
+		queueAction(TurnInPlaceToHeadingAction::instance(), &args);
+		queueAction(WaitAction::instance(), &wait_args);
+	}
+	*/
 	
+	/*
+	ActionArgs args;
+	ARGS(args, 0, floatval) = 0.0;
+	ARGS(args, 1, floatval) = 100.0;
+	ARGS(args, 2, floatval) = 10.0;
+	queueAction(DriveToLocationAction::instance(), &args);
 	queueAction(WaitAction::instance(), &wait_args);
-	
-	ARGS(args, 0, floatval) = 270;
-	queueAction(TurnInPlaceToHeadingAction::instance(), &args);
-	
-	queueAction(WaitAction::instance(), &wait_args);
-	
-	ARGS(args, 0, floatval) = 135;
-	queueAction(TurnInPlaceToHeadingAction::instance(), &args);
-	
-	queueAction(WaitAction::instance(), &wait_args);
-	
-	ARGS(args, 0, floatval) = 0;
-	queueAction(TurnInPlaceToHeadingAction::instance(), &args);
 	*/
 	
 	/*
 	ActionArgs args;
 
-	ARGS(args, 0, floatval) = 0;
-	queueAction(PanScoopServo::instance(), &args);
+	ARGS(args, 0, floatval) = -80;
+	queueAction(PanShovelServo::instance(), &args);
 	
 	ARGS(args, 0, ulongval) = 2000;
 	queueAction(WaitAction::instance(), &args);
 	
-	ARGS(args, 0, floatval) = 180.0;
-	queueAction(PanScoopServo::instance(), &args);
+	ARGS(args, 0, floatval) = 40.0;
+	queueAction(PanShovelServo::instance(), &args);
 	
 	ARGS(args, 0, ulongval) = 2000;
 	queueAction(WaitAction::instance(), &args);
 	
 	ARGS(args, 0, floatval) = 0;
-	queueAction(PanScoopServo::instance(), &args);
+	queueAction(PanShovelServo::instance(), &args);
 	*/
+
 	
 	//measureSpeedChange(30000);
 	
@@ -119,33 +115,40 @@ void setup() {
 	
 	//queueAction(TestDriveAction::instance(), NULL);
 	
+
 	ActionArgs args;
 	ARGS(args, 0, floatval) = 0.0;
 	ARGS(args, 1, floatval) = 100.0;
 	ARGS(args, 2, floatval) = 10.0;
-	queueAction(DumbDriveToLocationAction::instance(), &args);
+	queueAction(DriveToLocationAction::instance(), &args);
 	queueAction(WaitAction::instance(), &wait_args);
+	
 	
 	ARGS(args, 0, floatval) = 100.0;
 	ARGS(args, 1, floatval) = 100.0;
-	queueAction(DumbDriveToLocationAction::instance(), &args);
+	queueAction(DriveToLocationAction::instance(), &args);
 	queueAction(WaitAction::instance(), &wait_args);
 	
 	ARGS(args, 0, floatval) = 100.0;
 	ARGS(args, 1, floatval) = 0.0;
-	queueAction(DumbDriveToLocationAction::instance(), &args);
+	queueAction(DriveToLocationAction::instance(), &args);
 	queueAction(WaitAction::instance(), &wait_args);
 	
 	ARGS(args, 0, floatval) = 0.0;
 	ARGS(args, 1, floatval) = 0.0;
-	queueAction(DumbDriveToLocationAction::instance(), &args);
+	queueAction(DriveToLocationAction::instance(), &args);
 	queueAction(WaitAction::instance(), &wait_args);
+	
+	startCapture();
+	
+	setShovelServo(0.0);
 	
 	delay(1000);
 }
 
 float angle = 0;
 
+#include "sensorlib.h"
 
 void loop() {
 	processMain();
@@ -156,7 +159,20 @@ void loop() {
 	if(!queueLength()){
 		setScoopServo(angle);
 		angle += 0.5;
+		
+		ActionArgs wait_args;
+		ARGS(wait_args, 0, ulongval) = 100;
 		queueAction(WaitAction::instance(), &wait_args);
 	}
+	*/
+	
+	/*
+	float reading = readUltraSound();
+	Serial.print("sound: ");
+	Serial.print(reading);
+	
+	reading = getDistanceIRReading();
+	Serial.print(", distir: ");
+	Serial.println(reading);
 	*/
 }
