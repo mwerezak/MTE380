@@ -152,4 +152,59 @@ void TestDriveAction::cleanup() {
     //Serial.println(getMeasuredSpeed());
 }
 
+/** DriveForwardsAction **/
 
+void DriveForwardsAction::setup(ActionArgs *args) {
+    float distance = ARGSP(args, 0, floatval);
+    timer.set(distance/FWD_FULL_SPEED);
+    
+    driveServoLeft(FULL_FWD);
+    driveServoRight(FULL_FWD);
+}
+
+boolean DriveForwardsAction::checkFinished() {
+    return timer.expired();
+}
+
+void DriveForwardsAction::doWork() {
+    updateCurrentSpeed(FWD_FULL_SPEED);
+}
+
+void DriveForwardsAction::cleanup() {
+    driveServosNeutral();
+    updateCurrentSpeed(0);
+}
+
+/** DumbDriveToLocationAction **/
+
+void DumbDriveToLocationAction::setup(ActionArgs *args) {
+    target_pos.x = ARGSP(args, 0, floatval);
+    target_pos.y = ARGSP(args, 1, floatval);
+    tolerance_radius = ARGSP(args, 2, floatval);
+}
+
+boolean DumbDriveToLocationAction::checkFinished() {;
+
+    //see if we're close enough
+    vector2 current_pos = getCurrentPosition();
+    float distance = getDistance(target_pos, current_pos);
+    
+    if(distance <= tolerance_radius) {
+        return true; //done!
+    }
+    
+    //okay, figure out how to get there
+    float heading_to_target = getHeadingTo(target_pos);
+    
+    ActionArgs turn_args, drive_args;
+    ARGS(turn_args, 0, floatval) = heading_to_target;
+    ARGS(drive_args, 0, floatval) = distance;
+    
+    //suspend ourselves, then add turn then drive to the front of the queue
+    suspendCurrentAction();
+    setNextAction(this, NULL);
+    setNextAction(DriveForwardsAction::instance(), &drive_args);
+    setNextAction(TurnInPlaceToHeadingAction::instance(), &turn_args);
+    
+    return false;
+}
