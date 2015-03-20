@@ -4,6 +4,9 @@
 #include "action.h"
 #include "utility.h"
 
+// Queues up capture actions
+void startCapture();
+
 /*
     Parameters:
     0 - floatval: The target angle
@@ -29,5 +32,7 @@ public:
     virtual void setup(ActionArgs *args);
     virtual boolean checkFinished();
 };
+
+
 
 #endif
