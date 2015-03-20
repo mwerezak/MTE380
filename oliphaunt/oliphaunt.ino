@@ -23,127 +23,163 @@ ActionArgs wait_args;
 void setup() {
 	Serial.begin(115200);
 	Wire.begin();
-	
-	Serial.println("Initializing sensor drivers...");
-	initSensors();
-	
-	Serial.println("Initializing tracking...");
-	initTracking();
-	
-	Serial.println("Initializing servo drivers...");
-	initDriveServos();
-	
-	Serial.println("Initializing action queue...");
-	initQueue();
-	
-	ARGS(wait_args, 0, ulongval) = 3000;
-	
-	//releaseGyro();
-	
-	/*
-	float f;
-	boolean b;
-	
-	Serial.println("Initializing action queue...");
-	initQueue();
-	
-	float f;
-	boolean b;
-	
-	ActionArgs args;
 
-	ARGS(args, 0, floatval) = 0.0;
-	queueAction(PanIRServo::instance(), &args);
-	
-	queueAction(WaitAction::instance(), &wait_args);
-	
-	ARGS(args, 0, floatval) = -90.0;
-	ARGS(args, 1, floatval) = 90.0;
-	ARGS(args, 2, floatval) = 0.0;
-	ARGS(args, 3, floatval) = 10.0;
-	ARGS(args, 4, floatval) = 0.1;
-	ARGS(args, 5, ptrval) = &f;
-	ARGS(args, 6, ptrval) = &b;
-	queueAction(IRSweepForTarget::instance(), &args);
-	*/
-	
-	/*
-	ActionArgs args;
-	
-	float angles[] = {60, 120, 60, 0, -60, -120, -60, 0, 60, 120, 60, 0};
-	for(int i = 0; i < 12; i++) {
-		ARGS(args, 0, floatval) = angles[i];
-		queueAction(TurnInPlaceToHeadingAction::instance(), &args);
-		queueAction(WaitAction::instance(), &wait_args);
-	}
-	*/
-	
-	/*
-	ActionArgs args;
-	ARGS(args, 0, floatval) = 0.0;
-	ARGS(args, 1, floatval) = 100.0;
-	ARGS(args, 2, floatval) = 10.0;
-	queueAction(DriveToLocationAction::instance(), &args);
-	queueAction(WaitAction::instance(), &wait_args);
-	*/
-	
-	/*
-	ActionArgs args;
+	// Stright till ultrasound limit
 
-	ARGS(args, 0, floatval) = -80;
-	queueAction(PanShovelServo::instance(), &args);
-	
-	ARGS(args, 0, ulongval) = 2000;
-	queueAction(WaitAction::instance(), &args);
-	
-	ARGS(args, 0, floatval) = 40.0;
-	queueAction(PanShovelServo::instance(), &args);
-	
-	ARGS(args, 0, ulongval) = 2000;
-	queueAction(WaitAction::instance(), &args);
-	
-	ARGS(args, 0, floatval) = 0;
-	queueAction(PanShovelServo::instance(), &args);
-	*/
+	// turn to 0 degrees
+
+	// straight till ultrasound limit
+
+	// Ramp (straight till tilt)
+
+	postRampCheck();
+
+	// mount base
+
+	// straight
+
+	// capture
+
+	// turn to 90
+
+	// Straight till ultrasound limit
+
+	// turn to 180
+
+	// straight till ultrasound limit
+
+	postRampCheck();
+
+	// mount
+
+
+
+
+
+
+
 
 	
-	//measureSpeedChange(30000);
+	// Serial.println("Initializing sensor drivers...");
+	// initSensors();
+	
+	// Serial.println("Initializing tracking...");
+	// initTracking();
+	
+	// Serial.println("Initializing servo drivers...");
+	// initDriveServos();
+	
+	// Serial.println("Initializing action queue...");
+	// initQueue();
+	
+	// ARGS(wait_args, 0, ulongval) = 3000;
+	
+	// //releaseGyro();
+	
+	// /*
+	// float f;
+	// boolean b;
+	
+	// Serial.println("Initializing action queue...");
+	// initQueue();
+	
+	// float f;
+	// boolean b;
+	
+	// ActionArgs args;
+
+	// ARGS(args, 0, floatval) = 0.0;
+	// queueAction(PanIRServo::instance(), &args);
+	
+	// queueAction(WaitAction::instance(), &wait_args);
+	
+	// ARGS(args, 0, floatval) = -90.0;
+	// ARGS(args, 1, floatval) = 90.0;
+	// ARGS(args, 2, floatval) = 0.0;
+	// ARGS(args, 3, floatval) = 10.0;
+	// ARGS(args, 4, floatval) = 0.1;
+	// ARGS(args, 5, ptrval) = &f;
+	// ARGS(args, 6, ptrval) = &b;
+	// queueAction(IRSweepForTarget::instance(), &args);
+	// */
+	
+	// /*
+	// ActionArgs args;
+	
+	// float angles[] = {60, 120, 60, 0, -60, -120, -60, 0, 60, 120, 60, 0};
+	// for(int i = 0; i < 12; i++) {
+	// 	ARGS(args, 0, floatval) = angles[i];
+	// 	queueAction(TurnInPlaceToHeadingAction::instance(), &args);
+	// 	queueAction(WaitAction::instance(), &wait_args);
+	// }
+	// */
+	
+	// /*
+	// ActionArgs args;
+	// ARGS(args, 0, floatval) = 0.0;
+	// ARGS(args, 1, floatval) = 100.0;
+	// ARGS(args, 2, floatval) = 10.0;
+	// queueAction(DriveToLocationAction::instance(), &args);
+	// queueAction(WaitAction::instance(), &wait_args);
+	// */
 	
 	
-	//ARGS(args, 0, floatval) = 50.0;
-	//queueAction(DriveToLocationAction::instance(), &args);
+	// ActionArgs args;
+
+	// ARGS(args, 0, floatval) = -80;
+	// queueAction(PanShovelServo::instance(), &args);
 	
-	//queueAction(TestDriveAction::instance(), NULL);
+	// ARGS(args, 0, ulongval) = 2000;
+	// queueAction(WaitAction::instance(), &args);
+	
+	// ARGS(args, 0, floatval) = 40.0;
+	// queueAction(PanShovelServo::instance(), &args);
+	
+	// ARGS(args, 0, ulongval) = 2000;
+	// queueAction(WaitAction::instance(), &args);
+	
+	// ARGS(args, 0, floatval) = 0;
+	// queueAction(PanShovelServo::instance(), &args);
 	
 
-	ActionArgs args;
-	ARGS(args, 0, floatval) = 0.0;
-	ARGS(args, 1, floatval) = 100.0;
-	ARGS(args, 2, floatval) = 10.0;
-	queueAction(DriveToLocationAction::instance(), &args);
-	queueAction(WaitAction::instance(), &wait_args);
+	
+	// //measureSpeedChange(30000);
 	
 	
-	ARGS(args, 0, floatval) = 100.0;
-	ARGS(args, 1, floatval) = 100.0;
-	queueAction(DriveToLocationAction::instance(), &args);
-	queueAction(WaitAction::instance(), &wait_args);
+	// //ARGS(args, 0, floatval) = 50.0;
+	// //queueAction(DriveToLocationAction::instance(), &args);
 	
-	ARGS(args, 0, floatval) = 100.0;
-	ARGS(args, 1, floatval) = 0.0;
-	queueAction(DriveToLocationAction::instance(), &args);
-	queueAction(WaitAction::instance(), &wait_args);
+	// //queueAction(TestDriveAction::instance(), NULL);
 	
-	ARGS(args, 0, floatval) = 0.0;
-	ARGS(args, 1, floatval) = 0.0;
-	queueAction(DriveToLocationAction::instance(), &args);
-	queueAction(WaitAction::instance(), &wait_args);
+
+	// ActionArgs args;
+	// ARGS(args, 0, floatval) = 0.0;
+	// ARGS(args, 1, floatval) = 100.0;
+	// ARGS(args, 2, floatval) = 10.0;
+	// queueAction(DriveToLocationAction::instance(), &args);
+	// queueAction(WaitAction::instance(), &wait_args);
 	
-	startCapture();
 	
-	setShovelServo(0.0);
+	// ARGS(args, 0, floatval) = 100.0;
+	// ARGS(args, 1, floatval) = 100.0;
+	// queueAction(DriveToLocationAction::instance(), &args);
+	// queueAction(WaitAction::instance(), &wait_args);
 	
-	delay(1000);
+	// ARGS(args, 0, floatval) = 100.0;
+	// ARGS(args, 1, floatval) = 0.0;
+	// queueAction(DriveToLocationAction::instance(), &args);
+	// queueAction(WaitAction::instance(), &wait_args);
+	
+	// ARGS(args, 0, floatval) = 0.0;
+	// ARGS(args, 1, floatval) = 0.0;
+	// queueAction(DriveToLocationAction::instance(), &args);
+	// queueAction(WaitAction::instance(), &wait_args);
+	
+	// startCapture();
+	
+	// setShovelServo(0.0);
+	
+	// delay(1000);
 }
 
 float angle = 0;
