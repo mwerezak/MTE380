@@ -14,14 +14,10 @@
 boolean gyro_enabled, acc_enabled;
 
 AdamsBashforthIntegrator hdgIntegrator;
-EulerIntegrator pitchIntegrator;
+AdamsBashforthIntegrator pitchIntegrator;
 
 EulerIntegrator posXIntegrator;
 EulerIntegrator posYIntegrator;
-
-DelayTimer speedTimer;
-AdamsBashforthIntegrator speedIntegrator;
-AveragingFilter speedFilter;
 
 void initTracking() {
     //initialize sensors
@@ -56,50 +52,10 @@ void processTracking() {
         Serial.println();
         #endif
     }
-    /*
-    if(acc_enabled && updateAcc()) {
-        acc_data acc = getAccReading();
-        float fwd_acc = acc.ACC_FWD_AXIS;
-        
-        if(fabs(fwd_acc) <= ACC_TOLERANCE) fwd_acc = 0.0;
-        
-        speedFilter.feedData(fwd_acc);
-        speedIntegrator.feedData(speedFilter.getResult(), acc.update_time);
-        
-        Serial.println(speedIntegrator.getLastResult());
-        
-        if(doneSpeedMeasurement()) {
-            acc_enabled = false;
-            
-            #ifdef DBG_INS_TRACKING
-            Serial.print("Measured speed change: ");
-            Serial.print(getMeasuredSpeed());
-            Serial.println(" cm/s.");
-            #endif
-        }
-    }
-    */
+
 }
 
 /** Gyro **/
-
-/*
-void holdGyro() {
-    unsigned long time = millis();
-    hdgIntegrator.feedData(0, time);
-    pitchIntegrator.feedData(0, time);
-    gyro_enabled = false;
-    calibrateGyro();
-}
-
-void releaseGyro() {
-    float old_hdg = hdgIntegrator.getLastResult();
-    float old_pitch = pitchIntegrator.getLastResult();
-    hdgIntegrator.reset(old_hdg);
-    pitchIntegrator.reset(old_pitch);
-    gyro_enabled = true;
-}
-*/
 
 void setCurrentHeading(float newHdg) {
     hdgIntegrator.reset(newHdg);
@@ -163,27 +119,6 @@ void updateCurrentVelocity(vector2 new_vel) {
     Serial.println(" }");
     #endif
 }
-
-// Functions for using the accelerometer to measure changes in speed
-
-void measureSpeedChange(unsigned long measure_time) {
-    acc_enabled = true;
-    speedIntegrator.reset(0);
-    speedFilter.reset();
-    speedTimer.set(measure_time);
-}
-
-float getMeasuredSpeed() {
-    return speedIntegrator.getLastResult();
-}
-
-boolean doneSpeedMeasurement() {
-    return speedTimer.expired();
-}
-
-/** Compass **/
-
-
 
 /** Helper Functions **/
 
