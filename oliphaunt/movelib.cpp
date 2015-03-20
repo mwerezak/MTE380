@@ -1,3 +1,5 @@
+#define DBG_MOVE_CONTROL
+
 #include "movelib.h"
 
 #include <math.h>
@@ -52,8 +54,6 @@ void DriveToLocationAction::setup(ActionArgs *args) {
     target_pos.y = ARGSP(args, 1, floatval);
     tolerance_rad = ARGSP(args, 2, floatval);
     
-    //releaseGyro();
-    updateCurrentSpeed(25.1);
 }
 
 boolean DriveToLocationAction::checkFinished() {;
@@ -65,6 +65,7 @@ boolean DriveToLocationAction::checkFinished() {;
     float distance = getDistance(target_pos, current_pos);
     angle_tolerance = fabs(atan2(tolerance_rad, distance));
     
+    #ifdef DBG_MOVE_CONTROL
     Serial.print("Pos: { ");
     Serial.print(current_pos.x);
     Serial.print(", ");
@@ -81,6 +82,7 @@ boolean DriveToLocationAction::checkFinished() {;
     Serial.print(distance);
     Serial.print(", EPS: ");
     Serial.println(angle_tolerance);
+    #endif
     
     //Check if we've reached the destination
     if(distance <= tolerance_rad/3.0)
@@ -104,6 +106,7 @@ void DriveToLocationAction::doWork() {
         ARGS(drive_args, 1, floatval) = target_pos.y;
         ARGS(drive_args, 2, floatval) = tolerance_rad;
         
+        driveServosNeutral();
         updateCurrentSpeed(0);
         forceNextAction(TurnInPlaceToHeadingAction::instance(), &turn_args); //kills the current action
         setNextAction(this, &drive_args);
@@ -137,10 +140,12 @@ void TestDriveAction::doWork() {
     updateCurrentSpeed(FWD_FULL_SPEED);
     vector2 pos = getCurrentPosition();
     
+    #ifdef DBG_MOVE_CONTROL
     Serial.print("Pos: ");
     Serial.print(pos.x);
     Serial.print(", ");
     Serial.println(pos.y);
+    #endif
 }
 
 void TestDriveAction::cleanup() {
@@ -198,6 +203,20 @@ boolean DumbDriveToLocationAction::checkFinished() {
     ARGS(turn_args, 0, floatval) = getHeadingTo(target_pos);
     ARGS(drive_args, 0, floatval) = distance;
 
+    #ifdef DBG_MOVE_CONTROL
+    Serial.print("TGT: { ");
+    Serial.print(target_pos.x);
+    Serial.print(", ");
+    Serial.print(target_pos.y);
+    Serial.print(" }, ");
+    Serial.print("DIST: ");
+    Serial.print(distance);
+    Serial.print(", HTT: ");
+    Serial.print(ARGS(turn_args, 0, floatval));
+    Serial.print(", BTT: ");
+    Serial.println(headingToBearing(ARGS(turn_args, 0, floatval)));
+    #endif
+    
     //suspend ourselves, then put turn then drive at the front of the queue
     suspendCurrentAction();
 

@@ -1,6 +1,6 @@
 
 //#define DBG_GYRO_TRACKING
-//#define DBG_INS_TRACKING
+#define DBG_INS_TRACKING
 
 #include "trackinglib.h"
 
@@ -139,8 +139,13 @@ void updateCurrentSpeed(float newspeed) {
     
     //convert speed into X,Y components
     double theta = TORAD(getCurrentHeading());
-    vel.x = newspeed*cos(theta);
-    vel.y = newspeed*sin(theta);
+    vel.x = newspeed*sin(theta);
+    vel.y = newspeed*cos(theta);
+    
+    #ifdef DBG_INS_TRACKING
+    Serial.print("speed> ");
+    Serial.println(newspeed);
+    #endif
     
     updateCurrentVelocity(vel);
 }
@@ -149,6 +154,14 @@ void updateCurrentVelocity(vector2 new_vel) {
     unsigned long time = millis();
     posXIntegrator.feedData(new_vel.x, time);
     posYIntegrator.feedData(new_vel.y, time);
+    
+    #ifdef DBG_INS_TRACKING
+    Serial.print("Pos: { ");
+    Serial.print(posXIntegrator.getLastResult());
+    Serial.print(", ");
+    Serial.print(posYIntegrator.getLastResult());
+    Serial.println(" }");
+    #endif
 }
 
 // Functions for using the accelerometer to measure changes in speed
@@ -186,7 +199,7 @@ float getHeadingTo(vector2 loc) {
     loc.x -= pos.x;
     loc.y -= pos.y;
     
-    float angle = -atan2(loc.x, loc.y);
+    float angle = atan2(loc.x, loc.y);
     return normalizeAngle(TODEG(angle), 360);
 }
 
