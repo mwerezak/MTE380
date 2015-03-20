@@ -6,8 +6,9 @@
 #define USOUND_DATCTL_PIN       22
 #define USOUND_US_TO_CM         0.017241379310
 #define USOUND_CTL_PULSE_WIDTH  10      //microseconds
-#define USOUND_TIMEOUT          5200    //microseconds
+#define USOUND_TIMEOUT          52000    //microseconds
 #define USOUND_THRESHOLD        38000   //microseconds, the pulse width that indidcates no reading
+#define USOUND_OUT_OF_RANGE     99999
 
 //code using the ultrasound sensor should make sure to wait this time before calling readUltraSound() again
 #define USOUND_CYCLE_TIME       50
