@@ -4,6 +4,8 @@
 #include "action.h"
 #include "utility.h"
 
+#define FWD_FULL_SPEED  25.1 //cm/s
+
 /*
     Parameters:
     0 - floatval: The target heading

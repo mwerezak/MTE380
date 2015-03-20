@@ -28,8 +28,8 @@ void initTracking() {
     Serial.println("Initializing gyro...");
     initGyro();
     
-    Serial.println("Initializing accelerometer...");
-    initAccMag();
+    //Serial.println("Initializing accelerometer...");
+    //initAccMag();
 
     gyro_enabled = true;
     acc_enabled = false;
@@ -56,7 +56,7 @@ void processTracking() {
         Serial.println();
         #endif
     }
-    
+    /*
     if(acc_enabled && updateAcc()) {
         acc_data acc = getAccReading();
         float fwd_acc = acc.ACC_FWD_AXIS;
@@ -78,9 +78,7 @@ void processTracking() {
             #endif
         }
     }
-    
-    if(updateMag()) {
-    }
+    */
 }
 
 /** Gyro **/

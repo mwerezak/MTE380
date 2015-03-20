@@ -112,7 +112,7 @@ void setup() {
 	*/
 	
 	delay(1000);
-	measureSpeedChange(30000);
+	//measureSpeedChange(30000);
 	
 	
 	//ARGS(args, 0, floatval) = 50.0;
@@ -120,11 +120,36 @@ void setup() {
 	
 	//queueAction(TestDriveAction::instance(), NULL);
 	
-	//driveServoLeft(FULL_FWD);
-	//driveServoRight(FULL_FWD);
+	driveServoLeft(FULL_FWD);
+	driveServoRight(FULL_FWD);
+	
+	/*
+	ActionArgs args;
+	ARGS(args, 0, floatval) = 0.0;
+	ARGS(args, 1, floatval) = 100.0;
+	ARGS(args, 2, floatval) = 10.0;
+	queueAction(DriveToLocationAction::instance(), &args);
+	queueAction(WaitAction::instance(), &wait_args);
+	
+	ARGS(args, 0, floatval) = 100.0;
+	ARGS(args, 1, floatval) = 100.0;
+	queueAction(DriveToLocationAction::instance(), &args);
+	queueAction(WaitAction::instance(), &wait_args);
+	
+	ARGS(args, 0, floatval) = 100.0;
+	ARGS(args, 1, floatval) = 0.0;
+	queueAction(DriveToLocationAction::instance(), &args);
+	queueAction(WaitAction::instance(), &wait_args);
+	
+	ARGS(args, 0, floatval) = 0.0;
+	ARGS(args, 1, floatval) = 0.0;
+	queueAction(DriveToLocationAction::instance(), &args);
+	queueAction(WaitAction::instance(), &wait_args);
+	*/
 }
 
 float angle = 0;
+
 
 void loop() {
 	processMain();
