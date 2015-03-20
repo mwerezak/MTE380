@@ -4,6 +4,8 @@
 #include "action.h"
 #include "utility.h"
 
+#define FWD_FULL_SPEED  25.1 //cm/s
+
 /*
     Parameters:
     0 - floatval: The target heading
@@ -22,6 +24,38 @@ public:
     virtual void cleanup();
 };
 
+
+/*
+    Parameters:
+    None
+*/
+class TestDriveAction : public SingletonAction<TestDriveAction> {
+private:
+    DelayTimer timer;
+public:
+    virtual char* getName() { return "TestDriveAction"; }
+    virtual void setup(ActionArgs *args);
+    virtual boolean checkFinished();
+    virtual void doWork();
+    virtual void cleanup();
+};
+
+
+/*
+    Parameters
+    0 - floatval:   Distance to drive
+*/
+class DriveForwardsAction : public SingletonAction<DriveForwardsAction> {
+private:
+    DelayTimer timer;
+public:
+    virtual char* getName() { return "DriveForwardsAction"; }
+    virtual void setup(ActionArgs *args);
+    virtual boolean checkFinished();
+    virtual void doWork();
+    virtual void cleanup();
+};
+
 /*
     Parameters
     0 - floatval:   The x-position to drive to.
@@ -30,11 +64,25 @@ public:
 */
 class DriveToLocationAction : public SingletonAction<DriveToLocationAction> {
 private:
-    vector2 target_pos, current_pos;
-    float target_bearing, angle_tolerance;
-    float tolerance_rad;
+    vector2 target_pos;
+    float tolerance_radius;
 public:
     virtual char* getName() { return "DriveToLocationAction"; }
+    virtual void setup(ActionArgs *args);
+    virtual boolean checkFinished();
+    virtual void doWork();
+    virtual void cleanup();
+};
+
+/*
+    Parameters
+    None!
+*/
+class DriveUpRampAction : public SingletonAction<DriveUpRampAction> {
+    DelayTimer done;
+    boolean maybe_done;
+public:
+    virtual char* getName() { return "DriveUpRampAction"; }
     virtual void setup(ActionArgs *args);
     virtual boolean checkFinished();
     virtual void doWork();

@@ -15,6 +15,7 @@
 void initSensors() {
     //distance IR
     pinMode(DISTIR_CTL_PIN, OUTPUT);
+    enableDistanceIR();
     
     //ultrasound
     pinMode(USOUND_DATCTL_PIN, INPUT); //might as well keep the usound pin in the high-impedance state
@@ -55,7 +56,7 @@ float readDistanceIR(){
 
 
 // Returns a distance in cm
-double readSound() {
+double readUltraSound() {
     unsigned long pulse_width;
     
     //command pulse
@@ -70,8 +71,8 @@ double readSound() {
     pinMode(USOUND_DATCTL_PIN, INPUT);
     pulse_width = pulseIn(USOUND_DATCTL_PIN, HIGH, USOUND_TIMEOUT);
     
-    if(!pulse_width) return -2.0; //timeout
-    if(pulse_width >= USOUND_THRESHOLD) return -1.0;
+    if(!pulse_width) return -1.0; //timeout
+    if(pulse_width >= USOUND_THRESHOLD) return USOUND_OUT_OF_RANGE;
     return pulse_width*USOUND_US_TO_CM;
 }
 

@@ -25,10 +25,10 @@
 #ifndef _TRACKINGLIB_H
 #define _TRACKINGLIB_H
 
-#define GYRO_HDG_AXIS x
+#define GYRO_HDG_AXIS y
 #define GYRO_PITCH_AXIS z
 
-#define ACC_FWD_AXIS y
+#define ACC_FWD_AXIS x
 
 #define ACC_TOLERANCE 15.0   //cm/s^2
 
@@ -42,8 +42,8 @@ void setCurrentPitch(float newPitch);
 float getCurrentHeading();
 float getCurrentPitch();
 
-void holdGyro();
-void releaseGyro();
+//void holdGyro();
+//void releaseGyro();
 
 // Distances measured in cm
 void setCurrentPosition(vector2 newPos);
