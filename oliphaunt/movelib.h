@@ -94,4 +94,19 @@ public:
     virtual void cleanup();
 };
 
+/*
+    Parameters
+    None!
+*/
+class DriveUpRampAction : public SingletonAction<DriveUpRampAction> {
+    DelayTimer done;
+    boolean maybe_done;
+public:
+    virtual char* getName() { return "DriveUpRampAction"; }
+    virtual void setup(ActionArgs *args);
+    virtual boolean checkFinished();
+    virtual void doWork();
+    virtual void cleanup();
+};
+
 #endif

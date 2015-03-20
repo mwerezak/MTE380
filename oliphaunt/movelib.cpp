@@ -230,3 +230,47 @@ boolean DumbDriveToLocationAction::checkFinished() {
 void DumbDriveToLocationAction::doWork() {}
 
 void DumbDriveToLocationAction::cleanup() {}
+
+/** DriveUpRampAction **/
+
+#define HORIZ_RAMP_LENGTH 220 //used to update our position afterwards
+#define RAMP_TIMEOUT 250 //milliseconds
+void DriveUpRampAction::setup(ActionArgs *args) {
+    maybe_done = false;
+    
+    //we know we're level, so re-zero the gyro
+    setCurrentPitch(0.0);
+    
+    driveServoLeft(FULL_FWD);
+    driveServoRight(FULL_FWD);
+}
+
+boolean DriveUpRampAction::checkFinished() {
+    if(getCurrentPitch() < -20) {
+        if(!maybe_done) {
+            done.set(RAMP_TIMEOUT);
+        }
+        maybe_done = true;
+    }
+    else {
+        maybe_done = false;
+    }
+    
+    if(maybe_done && done.expired()) {
+        return true;
+    }
+    
+    return false;
+}
+
+void DriveUpRampAction::doWork() {}
+
+void DriveUpRampAction::cleanup() {
+    driveServosNeutral();
+    
+    //we're on the other side so adjust our position
+    vector2 pos = getCurrentPosition();
+    pos.y += HORIZ_RAMP_LENGTH;
+    setCurrentPosition(pos);
+}
+
