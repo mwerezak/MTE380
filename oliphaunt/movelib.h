@@ -11,7 +11,7 @@
     0 - floatval: The target heading
 */
 #define STOP_TOLERANCE 3.0  //degrees
-#define SLOW_TOLERANCE 45.0
+#define SLOW_TOLERANCE 15.0
 class TurnInPlaceToHeadingAction : public SingletonAction<TurnInPlaceToHeadingAction> {
 private:
     float targetHeading;
@@ -90,6 +90,8 @@ public:
     virtual char* getName() { return "DumbDriveToLocationAction"; }
     virtual void setup(ActionArgs *args);
     virtual boolean checkFinished();
+    virtual void doWork();
+    virtual void cleanup();
 };
 
 #endif

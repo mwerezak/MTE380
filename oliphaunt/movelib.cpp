@@ -13,7 +13,6 @@ void TurnInPlaceToHeadingAction::setup(ActionArgs *args) {
     targetBearing = headingToBearing(targetHeading);
     
     driveServosStop();
-    //releaseGyro();
 }
 
 boolean TurnInPlaceToHeadingAction::checkFinished() {
@@ -62,6 +61,7 @@ boolean DriveToLocationAction::checkFinished() {;
     current_pos = getCurrentPosition();
     float target_heading = getHeadingTo(target_pos);
     target_bearing = headingToBearing(target_heading);
+    
     float distance = getDistance(target_pos, current_pos);
     angle_tolerance = fabs(atan2(tolerance_rad, distance));
     
@@ -156,7 +156,7 @@ void TestDriveAction::cleanup() {
 
 void DriveForwardsAction::setup(ActionArgs *args) {
     float distance = ARGSP(args, 0, floatval);
-    timer.set(distance/FWD_FULL_SPEED);
+    timer.set(distance/FWD_FULL_SPEED*1000);
     
     driveServoLeft(FULL_FWD);
     driveServoRight(FULL_FWD);
@@ -183,28 +183,31 @@ void DumbDriveToLocationAction::setup(ActionArgs *args) {
     tolerance_radius = ARGSP(args, 2, floatval);
 }
 
-boolean DumbDriveToLocationAction::checkFinished() {;
+boolean DumbDriveToLocationAction::checkFinished() {
 
     //see if we're close enough
     vector2 current_pos = getCurrentPosition();
     float distance = getDistance(target_pos, current_pos);
-    
+
     if(distance <= tolerance_radius) {
         return true; //done!
     }
     
     //okay, figure out how to get there
-    float heading_to_target = getHeadingTo(target_pos);
-    
     ActionArgs turn_args, drive_args;
-    ARGS(turn_args, 0, floatval) = heading_to_target;
+    ARGS(turn_args, 0, floatval) = getHeadingTo(target_pos);
     ARGS(drive_args, 0, floatval) = distance;
-    
-    //suspend ourselves, then add turn then drive to the front of the queue
+
+    //suspend ourselves, then put turn then drive at the front of the queue
     suspendCurrentAction();
+
     setNextAction(this, NULL);
     setNextAction(DriveForwardsAction::instance(), &drive_args);
-    setNextAction(TurnInPlaceToHeadingAction::instance(), &turn_args);
+    forceNextAction(TurnInPlaceToHeadingAction::instance(), &turn_args);
     
     return false;
 }
+
+void DumbDriveToLocationAction::doWork() {}
+
+void DumbDriveToLocationAction::cleanup() {}
