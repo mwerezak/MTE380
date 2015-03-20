@@ -1,8 +1,8 @@
 
-#define DBG_DRIVE_SERVOS
+//#define DBG_DRIVE_SERVOS
 
 //#define DBG_PANNING_SERVO
-//#define DBG_CAPTURE_SERVOS
+#define DBG_CAPTURE_SERVOS
 
 #include "servolib.h"
 
@@ -30,6 +30,7 @@ void initDriveServos() {
     driveServosNeutral();
     setPanningServo(SERVO_PANNING_MAX_ANGLE);
     setScoopServo(SERVO_SCOOP_MAX_ANGLE);
+    setShovelServo(SERVO_SHOVEL_MAX_ANGLE);
 }
 
 void processDriveServos() {
@@ -168,7 +169,7 @@ void setScoopServo(float target_angle) {
 }
 
 void setShovelServo(float target_angle) {
-    float fcmd = LINSCALE(target_angle, 0, 180, SERVO_SHOVEL_MIN, SERVO_SHOVEL_MAX);
+    float fcmd = LINSCALE(target_angle, SERVO_SHOVEL_MIN_ANGLE, SERVO_SHOVEL_MAX_ANGLE, SERVO_SHOVEL_MIN, SERVO_SHOVEL_MAX);
     byte cmd = (byte) round(fcmd);
     analogWrite(SERVO_SHOVEL_PIN, cmd);
     

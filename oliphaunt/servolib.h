@@ -42,8 +42,10 @@
 
 // Shovel Servo
 #define SERVO_SHOVEL_PIN             10
-#define SERVO_SHOVEL_MIN             0
-#define SERVO_SHOVEL_MAX             255
+#define SERVO_SHOVEL_MIN             80
+#define SERVO_SHOVEL_MAX             230
+#define SERVO_SHOVEL_MIN_ANGLE       -80
+#define SERVO_SHOVEL_MAX_ANGLE       40
 
 //values mainly for debugging purposes
 typedef enum { 
