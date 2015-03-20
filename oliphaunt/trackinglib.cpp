@@ -1,5 +1,5 @@
 
-#define DBG_GYRO_TRACKING
+//#define DBG_GYRO_TRACKING
 //#define DBG_INS_TRACKING
 
 #include "trackinglib.h"
@@ -28,10 +28,10 @@ void initTracking() {
     Serial.println("Initializing gyro...");
     initGyro();
     
-    Serial.println("Initializing accelerometer...");
-    initAccMag();
+    //Serial.println("Initializing accelerometer...");
+    //initAccMag();
 
-    gyro_enabled = false;
+    gyro_enabled = true;
     acc_enabled = false;
     
     //initialize integrators
@@ -56,7 +56,7 @@ void processTracking() {
         Serial.println();
         #endif
     }
-    
+    /*
     if(acc_enabled && updateAcc()) {
         acc_data acc = getAccReading();
         float fwd_acc = acc.ACC_FWD_AXIS;
@@ -65,6 +65,8 @@ void processTracking() {
         
         speedFilter.feedData(fwd_acc);
         speedIntegrator.feedData(speedFilter.getResult(), acc.update_time);
+        
+        Serial.println(speedIntegrator.getLastResult());
         
         if(doneSpeedMeasurement()) {
             acc_enabled = false;
@@ -76,15 +78,18 @@ void processTracking() {
             #endif
         }
     }
+    */
 }
 
 /** Gyro **/
 
+/*
 void holdGyro() {
     unsigned long time = millis();
     hdgIntegrator.feedData(0, time);
     pitchIntegrator.feedData(0, time);
     gyro_enabled = false;
+    calibrateGyro();
 }
 
 void releaseGyro() {
@@ -94,6 +99,7 @@ void releaseGyro() {
     pitchIntegrator.reset(old_pitch);
     gyro_enabled = true;
 }
+*/
 
 void setCurrentHeading(float newHdg) {
     hdgIntegrator.reset(newHdg);
@@ -148,6 +154,7 @@ void updateCurrentVelocity(vector2 new_vel) {
 // Functions for using the accelerometer to measure changes in speed
 
 void measureSpeedChange(unsigned long measure_time) {
+    acc_enabled = true;
     speedIntegrator.reset(0);
     speedFilter.reset();
     speedTimer.set(measure_time);

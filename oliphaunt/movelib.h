@@ -4,12 +4,14 @@
 #include "action.h"
 #include "utility.h"
 
+#define FWD_FULL_SPEED  25.1 //cm/s
+
 /*
     Parameters:
     0 - floatval: The target heading
 */
 #define STOP_TOLERANCE 3.0  //degrees
-#define SLOW_TOLERANCE 15.0
+#define SLOW_TOLERANCE 45.0
 class TurnInPlaceToHeadingAction : public SingletonAction<TurnInPlaceToHeadingAction> {
 private:
     float targetHeading;
@@ -21,6 +23,8 @@ public:
     virtual void doWork();
     virtual void cleanup();
 };
+
+
 
 /*
     Parameters
@@ -54,6 +58,38 @@ public:
     virtual boolean checkFinished();
     virtual void doWork();
     virtual void cleanup();
+};
+
+
+/*
+    Parameters
+    0 - floatval:   Distance to drive
+*/
+class DriveForwardsAction : public SingletonAction<DriveForwardsAction> {
+private:
+    DelayTimer timer;
+public:
+    virtual char* getName() { return "DriveForwardsAction"; }
+    virtual void setup(ActionArgs *args);
+    virtual boolean checkFinished();
+    virtual void doWork();
+    virtual void cleanup();
+};
+
+/*
+    Parameters
+    0 - floatval:   The x-position to drive to.
+    1 - floatval:   The y-position to drive to.
+    2 - floatval:   The navigation tolerance radius.
+*/
+class DumbDriveToLocationAction : public SingletonAction<DumbDriveToLocationAction> {
+private:
+    vector2 target_pos;
+    float tolerance_radius;
+public:
+    virtual char* getName() { return "DumbDriveToLocationAction"; }
+    virtual void setup(ActionArgs *args);
+    virtual boolean checkFinished();
 };
 
 #endif

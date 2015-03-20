@@ -6,7 +6,7 @@
 #define _ACTIONQUEUE_H
 
 #define ACTION_PROCESS_DELAY 10 //100 Hz
-#define ACTION_QUEUE_SIZE 20
+#define ACTION_QUEUE_SIZE 40
 
 typedef struct ActionQueueItemStruct {
     Action *action;

@@ -13,7 +13,7 @@ void TurnInPlaceToHeadingAction::setup(ActionArgs *args) {
     targetBearing = headingToBearing(targetHeading);
     
     driveServosStop();
-    releaseGyro();
+    //releaseGyro();
 }
 
 boolean TurnInPlaceToHeadingAction::checkFinished() {
@@ -25,7 +25,7 @@ void TurnInPlaceToHeadingAction::doWork() {
     DriveCmd fwd = FULL_FWD;
     DriveCmd rev = FULL_REV;
     if(fabs(targetBearing) <= SLOW_TOLERANCE) {
-        fwd = HALF_FWD;
+        fwd = FULL_FWD;
         rev = HALF_REV;
     }
     
@@ -42,28 +42,45 @@ void TurnInPlaceToHeadingAction::doWork() {
 
 void TurnInPlaceToHeadingAction::cleanup() {
     driveServosNeutral();
-    holdGyro();
+    //holdGyro();
 }
 
 /** DriveToLocationAction **/
 
 void DriveToLocationAction::setup(ActionArgs *args) {
+
     target_pos.x = ARGSP(args, 0, floatval);
     target_pos.y = ARGSP(args, 1, floatval);
     tolerance_rad = ARGSP(args, 2, floatval);
     
-    measureSpeedChange(300);
-    releaseGyro();
+    //releaseGyro();
+    updateCurrentSpeed(25.1);
 }
 
-boolean DriveToLocationAction::checkFinished() {
+boolean DriveToLocationAction::checkFinished() {;
+
     current_pos = getCurrentPosition();
-    
     float target_heading = getHeadingTo(target_pos);
     target_bearing = headingToBearing(target_heading);
-    
     float distance = getDistance(target_pos, current_pos);
     angle_tolerance = fabs(atan2(tolerance_rad, distance));
+    
+    Serial.print("Pos: { ");
+    Serial.print(current_pos.x);
+    Serial.print(", ");
+    Serial.print(current_pos.y);
+    Serial.print(" }, Tgt: { ");
+    Serial.print(target_pos.x);
+    Serial.print(", ");
+    Serial.print(target_pos.y);
+    Serial.print(" }, BTT: ");
+    Serial.print(target_bearing);
+    Serial.print(" }, HTT: ");
+    Serial.print(target_heading);
+    Serial.print(", DST: ");
+    Serial.print(distance);
+    Serial.print(", EPS: ");
+    Serial.println(angle_tolerance);
     
     //Check if we've reached the destination
     if(distance <= tolerance_rad/3.0)
@@ -87,25 +104,19 @@ void DriveToLocationAction::doWork() {
         ARGS(drive_args, 1, floatval) = target_pos.y;
         ARGS(drive_args, 2, floatval) = tolerance_rad;
         
+        updateCurrentSpeed(0);
         forceNextAction(TurnInPlaceToHeadingAction::instance(), &turn_args); //kills the current action
         setNextAction(this, &drive_args);
     } else {
         driveServoLeft(FULL_FWD);
         driveServoRight(FULL_FWD);
-        
-        //update the current speed if we can
-        if(doneSpeedMeasurement()) {
-            //make sure to update this every tick
-            //to account for change in direction
-            updateCurrentSpeed(getMeasuredSpeed());
-        }
+        updateCurrentSpeed(FWD_FULL_SPEED);
     }
 }
 
 void DriveToLocationAction::cleanup() {
     driveServosNeutral();
     updateCurrentSpeed(0); //notify tracking that we've stopped
-    holdGyro();
 }
 
 /** TestDriveAction **/
@@ -113,8 +124,7 @@ void DriveToLocationAction::cleanup() {
 void TestDriveAction::setup(ActionArgs *args) {
     timer.set(5000);
     
-    releaseGyro();
-    measureSpeedChange(300);
+    //releaseGyro();
     driveServoLeft(FULL_FWD);
     driveServoRight(FULL_FWD);
 }
@@ -124,15 +134,77 @@ boolean TestDriveAction::checkFinished() {
 }
 
 void TestDriveAction::doWork() {
-    if(doneSpeedMeasurement()) {
-        updateCurrentSpeed(getMeasuredSpeed());
-    }
+    updateCurrentSpeed(FWD_FULL_SPEED);
+    vector2 pos = getCurrentPosition();
+    
+    Serial.print("Pos: ");
+    Serial.print(pos.x);
+    Serial.print(", ");
+    Serial.println(pos.y);
 }
 
 void TestDriveAction::cleanup() {
     driveServosNeutral();
     updateCurrentSpeed(0); //notify tracking that we've stopped
-    holdGyro();
+    //holdGyro();
+    
+    //trap with the measured speed
+    //Serial.println(getMeasuredSpeed());
 }
 
+/** DriveForwardsAction **/
 
+void DriveForwardsAction::setup(ActionArgs *args) {
+    float distance = ARGSP(args, 0, floatval);
+    timer.set(distance/FWD_FULL_SPEED);
+    
+    driveServoLeft(FULL_FWD);
+    driveServoRight(FULL_FWD);
+}
+
+boolean DriveForwardsAction::checkFinished() {
+    return timer.expired();
+}
+
+void DriveForwardsAction::doWork() {
+    updateCurrentSpeed(FWD_FULL_SPEED);
+}
+
+void DriveForwardsAction::cleanup() {
+    driveServosNeutral();
+    updateCurrentSpeed(0);
+}
+
+/** DumbDriveToLocationAction **/
+
+void DumbDriveToLocationAction::setup(ActionArgs *args) {
+    target_pos.x = ARGSP(args, 0, floatval);
+    target_pos.y = ARGSP(args, 1, floatval);
+    tolerance_radius = ARGSP(args, 2, floatval);
+}
+
+boolean DumbDriveToLocationAction::checkFinished() {;
+
+    //see if we're close enough
+    vector2 current_pos = getCurrentPosition();
+    float distance = getDistance(target_pos, current_pos);
+    
+    if(distance <= tolerance_radius) {
+        return true; //done!
+    }
+    
+    //okay, figure out how to get there
+    float heading_to_target = getHeadingTo(target_pos);
+    
+    ActionArgs turn_args, drive_args;
+    ARGS(turn_args, 0, floatval) = heading_to_target;
+    ARGS(drive_args, 0, floatval) = distance;
+    
+    //suspend ourselves, then add turn then drive to the front of the queue
+    suspendCurrentAction();
+    setNextAction(this, NULL);
+    setNextAction(DriveForwardsAction::instance(), &drive_args);
+    setNextAction(TurnInPlaceToHeadingAction::instance(), &turn_args);
+    
+    return false;
+}

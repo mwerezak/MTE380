@@ -30,6 +30,7 @@ void setup() {
 	
 	Serial.println("Initializing tracking...");
 	initTracking();
+	//releaseGyro();
 	
 	Serial.println("Initializing servo drivers...");
 	initDriveServos();
@@ -52,6 +53,7 @@ void setup() {
 	boolean b;
 	
 	ActionArgs args;
+
 	ARGS(args, 0, floatval) = 0.0;
 	queueAction(PanIRServo::instance(), &args);
 	
@@ -109,15 +111,41 @@ void setup() {
 	queueAction(PanScoopServo::instance(), &args);
 	*/
 	
-	delay(1000);
+	//measureSpeedChange(30000);
+	
+	
+	//ARGS(args, 0, floatval) = 50.0;
+	//queueAction(DriveToLocationAction::instance(), &args);
 	
 	//queueAction(TestDriveAction::instance(), NULL);
 	
-	//driveServoLeft(FULL_FWD);
-	//driveServoRight(FULL_FWD);
+	ActionArgs args;
+	ARGS(args, 0, floatval) = 0.0;
+	ARGS(args, 1, floatval) = 100.0;
+	ARGS(args, 2, floatval) = 10.0;
+	queueAction(DumbDriveToLocationAction::instance(), &args);
+	queueAction(WaitAction::instance(), &wait_args);
+	
+	ARGS(args, 0, floatval) = 100.0;
+	ARGS(args, 1, floatval) = 100.0;
+	queueAction(DumbDriveToLocationAction::instance(), &args);
+	queueAction(WaitAction::instance(), &wait_args);
+	
+	ARGS(args, 0, floatval) = 100.0;
+	ARGS(args, 1, floatval) = 0.0;
+	queueAction(DumbDriveToLocationAction::instance(), &args);
+	queueAction(WaitAction::instance(), &wait_args);
+	
+	ARGS(args, 0, floatval) = 0.0;
+	ARGS(args, 1, floatval) = 0.0;
+	queueAction(DumbDriveToLocationAction::instance(), &args);
+	queueAction(WaitAction::instance(), &wait_args);
+	
+	delay(1000);
 }
 
 float angle = 0;
+
 
 void loop() {
 	processMain();
