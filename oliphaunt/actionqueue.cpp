@@ -111,7 +111,7 @@ void setNextAction(Action *next, ActionArgs *args) {
     _queueLen++;
     
     _actionQueue[_startIdx].action = next;
-    _actionQueue[_startIdx].args = *args;
+    if(args) _actionQueue[_startIdx].args = *args;
 }
 
 //Adds to the end of the queue
@@ -125,7 +125,7 @@ void queueAction(Action *action, ActionArgs *args) {
     
     int endIdx = _endIdx();
     _actionQueue[endIdx].action = action;
-    _actionQueue[endIdx].args = *args;
+    if(args) _actionQueue[endIdx].args = *args;
 }
 
 
