@@ -6,6 +6,11 @@
 
 void startCapture() {
     ActionArgs angle_args, delay_args;
+    ARGS(delay_args, 0, ulongval) = 3000;
+    
+    setPanningServo(SERVO_PANNING_MAX_ANGLE);
+    queueAction(WaitAction::instance(), &delay_args);
+    
     ARGS(delay_args, 0, ulongval) = 1000;
     
     //ensure scoop is raised back (max angle)
@@ -13,7 +18,7 @@ void startCapture() {
     queueAction(PanScoopServo::instance(), &angle_args);
     
     //open the shovel to -20 deg
-    ARGS(angle_args, 0, floatval) = -20;
+    ARGS(angle_args, 0, floatval) = -23;
     queueAction(PanShovelServo::instance(), &angle_args);
     queueAction(WaitAction::instance(), &delay_args);
     
@@ -23,10 +28,10 @@ void startCapture() {
     queueAction(WaitAction::instance(), &delay_args);
     
     //retract scoop
-    //ARGS(angle_args, 0, floatval) = SERVO_SCOOP_MAX_ANGLE;
-    //ARGS(delay_args, 0, ulongval) = 500;
-    //queueAction(PanScoopServo::instance(), &angle_args);
-    //queueAction(WaitAction::instance(), &delay_args);
+    ARGS(angle_args, 0, floatval) = SERVO_SCOOP_MAX_ANGLE;
+    ARGS(delay_args, 0, ulongval) = 500;
+    queueAction(PanScoopServo::instance(), &angle_args);
+    queueAction(WaitAction::instance(), &delay_args);
     
     //raise shovel (max angle)
     ARGS(angle_args, 0, floatval) = SERVO_SHOVEL_MAX_ANGLE;

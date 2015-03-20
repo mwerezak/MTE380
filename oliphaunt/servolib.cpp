@@ -1,8 +1,8 @@
 
 //#define DBG_DRIVE_SERVOS
 
-//#define DBG_PANNING_SERVO
-#define DBG_CAPTURE_SERVOS
+#define DBG_PANNING_SERVO
+//#define DBG_CAPTURE_SERVOS
 
 #include "servolib.h"
 
@@ -28,9 +28,9 @@ void initDriveServos() {
     update_right = false;
     
     driveServosNeutral();
-    setPanningServo(SERVO_PANNING_MAX_ANGLE);
+    setPanningServo(0.0);
     setScoopServo(SERVO_SCOOP_MAX_ANGLE);
-    setShovelServo(SERVO_SHOVEL_MAX_ANGLE);
+    setShovelServo(-10.0);
 }
 
 void processDriveServos() {
@@ -129,8 +129,8 @@ void _setDriveServoRight(DriveCmd setting) {
 static float panning_setpoint;
 
 void setPanningServo(float angle) {
-    angle = constrain(angle, SERVO_PANNING_MIN_ANGLE, SERVO_PANNING_MAX_ANGLE);
-    float fcmd = LINSCALE(angle, SERVO_PANNING_MIN_ANGLE, SERVO_PANNING_MAX_ANGLE, SERVO_PANNING_MIN, SERVO_PANNING_MAX);
+    float fcmd = constrain(-angle, -SERVO_PANNING_MAX_ANGLE, -SERVO_PANNING_MIN_ANGLE);
+    fcmd = LINSCALE(fcmd, -SERVO_PANNING_MAX_ANGLE, -SERVO_PANNING_MIN_ANGLE, SERVO_PANNING_MIN, SERVO_PANNING_MAX);
     byte cmd = (byte) round(fcmd);
     analogWrite(SERVO_PANNING_PIN, cmd);
     panning_setpoint = angle;
@@ -145,6 +145,10 @@ void setPanningServo(float angle) {
 
 float getPanningServoSetpoint() {
     return panning_setpoint;
+}
+
+void tuckPanningServo() {
+    analogWrite(SERVO_PANNING_PIN, SERVO_PANNING_MAX);
 }
 
 unsigned long estimatePanningTime(float target_angle) {

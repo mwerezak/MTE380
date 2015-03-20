@@ -115,7 +115,7 @@ void setup() {
 	
 	//queueAction(TestDriveAction::instance(), NULL);
 	
-
+/*
 	ActionArgs args;
 	ARGS(args, 0, floatval) = 0.0;
 	ARGS(args, 1, floatval) = 100.0;
@@ -139,14 +139,20 @@ void setup() {
 	queueAction(DriveToLocationAction::instance(), &args);
 	queueAction(WaitAction::instance(), &wait_args);
 	
-	startCapture();
+	*/
 	
-	setShovelServo(0.0);
+	//startCapture();
+	
+	
+	//setShovelServo(0.0);
+	//setScoopServo(180.0);
+	setPanningServo(SERVO_PANNING_MAX_ANGLE);
 	
 	delay(1000);
+	
 }
 
-float angle = 0;
+float angle = -30;
 
 #include "sensorlib.h"
 
@@ -155,16 +161,16 @@ void loop() {
 	processTracking();
 	processDriveServos();
 	
-	/*
+	
 	if(!queueLength()){
-		setScoopServo(angle);
-		angle += 0.5;
+		setPanningServo(angle);
+		angle += 1;
 		
 		ActionArgs wait_args;
 		ARGS(wait_args, 0, ulongval) = 100;
-		queueAction(WaitAction::instance(), &wait_args);
+		setNextAction(WaitAction::instance(), &wait_args);
 	}
-	*/
+	
 	
 	/*
 	float reading = readUltraSound();

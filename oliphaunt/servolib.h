@@ -27,11 +27,11 @@
 
 // Panning Servo
 #define SERVO_PANNING_PIN          9
-#define SERVO_PANNING_MAX          255
-#define SERVO_PANNING_MIN          10
+#define SERVO_PANNING_MIN          60
+#define SERVO_PANNING_MAX          155
 #define SERVO_PANNING_EST_SPEED    2.833333 //ms/deg
-#define SERVO_PANNING_MIN_ANGLE    -83
-#define SERVO_PANNING_MAX_ANGLE    +90
+#define SERVO_PANNING_MIN_ANGLE    -30
+#define SERVO_PANNING_MAX_ANGLE    +30
 
 // Scoop Servo
 #define SERVO_SCOOP_PIN             11
@@ -69,6 +69,7 @@ void driveServoRight(DriveCmd setting);
 //Panning angles are specified as -90 to +90 deg
 void setPanningServo(float target_angle);
 float getPanningServoSetpoint();
+void tuckPanningServo();
 
 //returns a duration in ms, 
 //will NOT return a valid value if called immediately after setPanningServo()
