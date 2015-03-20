@@ -1,8 +1,8 @@
 
-#define DBG_DRIVE_SERVOS
+//#define DBG_DRIVE_SERVOS
 
-#define DBG_PANNING_SERVO
-#define DBG_CAPTURE_SERVOS
+//#define DBG_PANNING_SERVO
+//#define DBG_CAPTURE_SERVOS
 
 #include "servolib.h"
 

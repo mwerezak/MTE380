@@ -1,13 +1,16 @@
-
+//#define DBG_ACC
+//#define DBG_MAG
 
 #include "accmag_driver.h"
 
 static LSM303 accmag;
 static acc_raw_data ACC_OFFSET; //raw offsets
 static unsigned long acc_last_update, acc_last_update_micros;
+static unsigned long mag_last_update, mag_last_update_micros;
 //static unsigned long mag_last_update;
 
 void _printDebugAcc();
+void _printDebugMag();
 
 void initAccMag() {
     if(!accmag.init()) {
@@ -15,15 +18,26 @@ void initAccMag() {
         while (1); //trap
     }
     accmag.enableDefault();
-    accmag.writeReg(LSM303::CTRL1, 0x77); //200 Hz, BDU default, all axis enable
+    accmag.writeReg(LSM303::CTRL1, 0xA7); //1600 Hz, BDU default, all axis enable
     accmag.writeReg(LSM303::CTRL2, 0xC0); //50 Hz AA filter, 2G full scale
-    //accmag.writeReg(LSM303::CTRL7, 0x02); //
+    //accmag.writeReg(LSM303::CTRL7, 0b00000010); //
+    
+    //accmag.writeReg(LSM303::CTRL5, 0x74); //magnetometer high resolution mode, 100 Hz
+    //accmag.writeReg(LSM303::CTRL6, 0x00); //2 gauss full scale
+    
     
     delay(50);
     
     calibrateAccm();
-    acc_last_update = millis();
-    acc_last_update_micros = micros();
+    
+    unsigned long tmillis, tmicros;
+    tmillis = millis();
+    tmicros = micros();
+    
+    acc_last_update = tmillis;
+    acc_last_update_micros = tmicros;
+    mag_last_update = tmillis;
+    mag_last_update_micros = tmicros;
 }
 
 #define ACC_CALBR_NUM_SAMPLES 128
@@ -59,6 +73,10 @@ acc_raw_data getAccRaw() {
     return result;
 }
 
+mag_raw_data getMagRaw() {
+    return accmag.m;
+}
+
 acc_data getAccReading() {
     acc_raw_data data = getAccRaw();
     
@@ -82,6 +100,18 @@ boolean updateAcc() {
     return false;
 }
 
+boolean updateMag() {
+    if(micros() - mag_last_update_micros >= MAG_READ_DELAY) {
+        accmag.readMag();
+        mag_last_update = millis();
+        mag_last_update_micros = micros();
+      
+        _printDebugMag();
+        return true;
+    }
+    return false;
+}
+
 inline void _printDebugAcc() {
     #ifdef DBG_ACC
     acc_data data = getAccReading();
@@ -94,6 +124,22 @@ inline void _printDebugAcc() {
     
     char printout[80];
     snprintf(printout, 80, "accm:     {x: %+6d, y: %+6d, z: %+6d}", int(data.x*1000), int(data.y*1000), int(data.z*1000));
+    Serial.println(printout);
+    #endif
+}
+
+inline void _printDebugMag() {
+    #ifdef DBG_MAG
+    mag_raw_data data = getMagRaw();
+    
+    String outstring = "                                                                ";
+    outstring.setCharAt(11+((int)data.x)/3277, ':');
+    outstring.setCharAt(32+((int)data.y)/3277, ':');
+    outstring.setCharAt(53+((int)data.z)/3277, ':');
+    Serial.println(outstring);
+    
+    char printout[80];
+    snprintf(printout, 80, "magn:     {x: %+6d, y: %+6d, z: %+6d}", int(data.x*1000), int(data.y*1000), int(data.z*1000));
     Serial.println(printout);
     #endif
 }
