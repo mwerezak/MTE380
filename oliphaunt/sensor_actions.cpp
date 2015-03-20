@@ -44,7 +44,6 @@ void IRDistanceReading::doWork() {
 }
 
 void IRDistanceReading::cleanup() {
-    disableDistanceIR();
 
     //calculate the average and write it to return_ptr
     float total = 0;
