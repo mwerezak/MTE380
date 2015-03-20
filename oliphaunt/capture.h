@@ -6,6 +6,7 @@
 
 // Queues up capture actions
 void startCapture();
+void mountBase();
 
 /*
     Parameters:

@@ -32,9 +32,7 @@ void postRampCheck () {
         setNextAction(DriveToLocationAction::instance(), &args);
     }
     else {
-        ActionArgs sweep_args;
-        //set sweep args
-        //queue sweep
+        setNextAction(SweepForBase::instance(),NULL);
 
         ActionArgs turn_args;
         ARGS(turn_args, 0, floatval) = 270;
@@ -72,14 +70,19 @@ void SweepForBase::doWork() {
 
     if(counter > 5) {
         //found it, go there
-        vector2 target = getAbsoluteDisplacement(last_reading, scan_angle);
+        vector2 target = getAbsoluteDisplacement(last_reading - 10, scan_angle);
 
         ActionArgs args;
+        ARGS(args, 0, floatval) = normalizeAngle(getCurrentHeading() + scan_angle, 360);
+        setNextAction(TurnInPlaceToHeadingAction::instance(), &args);
+
+
         ARGS(args, 0, floatval) = target.x;
         ARGS(args, 1, floatval) = target.y;
         ARGS(args, 2, floatval) = 10;
         setNextAction(DriveToLocationAction::instance(), &args);
-        
+
+        mountBase();        
 
         killCurrentAction();
         return;

@@ -33,6 +33,15 @@ void startCapture() {
     queueAction(PanShovelServo::instance(), &angle_args);
 }
 
+void mountBase() {
+    ActionArgs args, delay_args;
+
+    //drive blind 10 cm
+    //rezero the    
+    //open the shovel to -10
+    //drive until level 
+}
+
 /** PanScoopServo **/
 
 void PanScoopServo::setup(ActionArgs *args) {
