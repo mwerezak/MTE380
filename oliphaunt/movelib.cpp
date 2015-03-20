@@ -13,7 +13,7 @@ void TurnInPlaceToHeadingAction::setup(ActionArgs *args) {
     targetBearing = headingToBearing(targetHeading);
     
     driveServosStop();
-    releaseGyro();
+    //releaseGyro();
 }
 
 boolean TurnInPlaceToHeadingAction::checkFinished() {
@@ -25,7 +25,7 @@ void TurnInPlaceToHeadingAction::doWork() {
     DriveCmd fwd = FULL_FWD;
     DriveCmd rev = FULL_REV;
     if(fabs(targetBearing) <= SLOW_TOLERANCE) {
-        fwd = HALF_FWD;
+        fwd = FULL_FWD;
         rev = HALF_REV;
     }
     
@@ -42,7 +42,7 @@ void TurnInPlaceToHeadingAction::doWork() {
 
 void TurnInPlaceToHeadingAction::cleanup() {
     driveServosNeutral();
-    holdGyro();
+    //holdGyro();
 }
 
 /** DriveToLocationAction **/
@@ -53,7 +53,7 @@ void DriveToLocationAction::setup(ActionArgs *args) {
     tolerance_rad = ARGSP(args, 2, floatval);
     
     measureSpeedChange(300);
-    releaseGyro();
+    //releaseGyro();
 }
 
 boolean DriveToLocationAction::checkFinished() {
@@ -105,7 +105,7 @@ void DriveToLocationAction::doWork() {
 void DriveToLocationAction::cleanup() {
     driveServosNeutral();
     updateCurrentSpeed(0); //notify tracking that we've stopped
-    holdGyro();
+    //holdGyro();
     
     //trap and just print the result repeatedly
     while(1) Serial.println(getMeasuredSpeed());
@@ -116,8 +116,8 @@ void DriveToLocationAction::cleanup() {
 void TestDriveAction::setup(ActionArgs *args) {
     timer.set(5000);
     
-    releaseGyro();
-    measureSpeedChange(300);
+    //releaseGyro();
+    measureSpeedChange(1000);
     driveServoLeft(FULL_FWD);
     driveServoRight(FULL_FWD);
 }
@@ -135,7 +135,10 @@ void TestDriveAction::doWork() {
 void TestDriveAction::cleanup() {
     driveServosNeutral();
     updateCurrentSpeed(0); //notify tracking that we've stopped
-    holdGyro();
+    //holdGyro();
+    
+    //trap with the measured speed
+    //Serial.println(getMeasuredSpeed());
 }
 
 

@@ -7,7 +7,7 @@
 #include <L3G.h>
 #include <Arduino.h>
 
-#define GYRO_READ_DELAY 5000 //In microseconds, 200 Hz
+#define GYRO_READ_DELAY 1250 //In microseconds, 800 Hz
 
 // L3G4200D gyro: 245 dps full scale
 // 8.75 mdps/digit; 1 dps = 0.00875

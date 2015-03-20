@@ -30,6 +30,7 @@ void setup() {
 	
 	Serial.println("Initializing tracking...");
 	initTracking();
+	//releaseGyro();
 	
 	Serial.println("Initializing servo drivers...");
 	initDriveServos();
@@ -111,6 +112,7 @@ void setup() {
 	*/
 	
 	delay(1000);
+	measureSpeedChange(30000);
 	
 	
 	//ARGS(args, 0, floatval) = 50.0;

@@ -9,7 +9,7 @@
     0 - floatval: The target heading
 */
 #define STOP_TOLERANCE 3.0  //degrees
-#define SLOW_TOLERANCE 15.0
+#define SLOW_TOLERANCE 45.0
 class TurnInPlaceToHeadingAction : public SingletonAction<TurnInPlaceToHeadingAction> {
 private:
     float targetHeading;

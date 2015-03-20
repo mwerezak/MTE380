@@ -1,4 +1,4 @@
-//#define DBG_ACC
+#define DBG_ACC
 //#define DBG_MAG
 
 #include "accmag_driver.h"
